@@ -1,0 +1,47 @@
+{
+  "name": "effect-kit-emails-workspace",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm typecheck:test && pnpm build",
+    "clean": "turbo run clean",
+    "dev": "turbo run dev",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "lint": "oxlint --deny-warnings .",
+    "lint:fix": "oxlint --fix .",
+    "prepare": "lefthook install",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck && tsc --project tsconfig.json --noEmit",
+    "typecheck:test": "turbo run typecheck:test",
+    "check:package": "turbo run check:package",
+    "changeset": "changeset",
+    "version-packages": "changeset version"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "0.18.5",
+    "@changesets/cli": "3.0.3",
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
+    "@effect/vitest": "4.0.6",
+    "@types/node": "24.19.2",
+    "effect": "catalog:",
+    "klarity": "catalog:",
+    "lefthook": "2.2.2",
+    "oxfmt": "0.74.0",
+    "oxlint": "1.89.0",
+    "publint": "0.3.25",
+    "tsdown": "catalog:",
+    "turbo": "2.11.10",
+    "typescript": "catalog:",
+    "vite": "8.3.5",
+    "vitest": "catalog:"
+  },
+  "engines": {
+    "node": ">=24.22.0",
+    "pnpm": ">=12.14.0 <13"
+  },
+  "packageManager": "pnpm@12.14.0"
+}
