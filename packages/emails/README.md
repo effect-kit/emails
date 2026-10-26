@@ -1,7 +1,8 @@
 # @effect-kit/emails
 
 Effect v4 native email services and contracts. Core sending works through custom provider Layers.
-Built-in SDK adapters, React rendering, batching and the public testing Layer are planned separately.
+The public testing Layer captures offline submissions. Built-in SDK adapters, React rendering and
+batching are planned separately.
 
 ```ts
 import { Schema } from "effect";
@@ -117,3 +118,47 @@ in the application. Reference values are evidence for lookup, not a deduplicatio
 One Email.send span records provider, outcome/reason and counts, without adding recipient addresses,
 subjects, content or keys. Custom adapters are responsible for safe error metadata/references and
 should not add sensitive span attributes or raw SDK causes. External exporters/logging remain yours.
+
+## Testing an application
+
+```ts
+import { Effect } from "effect";
+
+import { Email } from "@effect-kit/emails";
+import { EmailTest } from "@effect-kit/emails/testing";
+
+const check = Effect.gen(function* () {
+  const email = yield* Email;
+  yield* email.send({
+    from: "hello@example.com",
+    to: "ada@example.com",
+    subject: "Welcome",
+    text: "Your account is ready.",
+  });
+
+  const recorder = yield* EmailTest;
+  return yield* recorder.messages;
+}).pipe(Effect.provide(EmailTest.layer()));
+```
+
+`EmailTest.layer(options?)` provides both Email and EmailTest with fresh Ref-backed state per Layer
+acquisition. Normal Layer sharing applies within a scope; independent scopes start empty. The default
+provider is `test`. Successful default receipts have synthetic `email-test-N` references local to that
+acquisition; they do not identify delivered emails. Nothing is sent, logged or written to disk.
+
+`messages` returns fresh snapshots of normalized attempts, including failed, defective or interrupted
+attempts. It does not claim they succeeded. Invalid/unsupported input is excluded, as it fails before
+the test adapter runs. Observations cannot mutate internal metadata or attachment bytes.
+
+Options accept `provider`, a complete `capabilities` descriptor and `responses`, an ordered array of
+`Effect<SendReceipt, EmailError>`. For example, `responses: [Effect.fail(error), Effect.succeed(receipt)]`
+scripts a failure followed by a successful attempt. Scripts reserve one slot atomically when submission
+starts, including under concurrency; completion order can differ. If supplied, a script is finite:
+exhaustion is a defect so extra attempts cannot pass silently. An empty script expects no attempts.
+Omit it for default successes. Script errors/defects/interruption retain their normal Effect semantics;
+close over dependencies before supplying response Effects. Script receipts still undergo core checks.
+
+Default capabilities support all message fields with multiple replyTo addresses; idempotency is
+unsupported. Supply capabilities matching your real provider to test restrictions. Capability overrides
+test feature enforcement; this Layer does not emulate provider deduplication, limits, retries or network
+protocols. Explicitly script those outcomes when testing application policy.

@@ -1,8 +1,7 @@
 import { assert, describe, it } from "@effect/vitest";
 import { Cause, Deferred, Effect, Exit, Fiber, Result } from "effect";
 
-import { EmailError, TransportError } from "@effect-kit/emails";
-import type { NormalizedEmailMessage, SendOptions, SendReceipt } from "@effect-kit/emails";
+import type { NormalizedEmailMessage, SendOptions } from "@effect-kit/emails";
 
 import { capabilities, makeCustomEmail, message, receipt } from "../../fixtures/email.js";
 
@@ -115,79 +114,6 @@ describe("submission boundary", () => {
         ],
       });
       assert.strictEqual(bytes[0], 1);
-    }),
-  );
-
-  it.effect("retains a partial receipt without retrying accepted recipients", () =>
-    Effect.gen(function* () {
-      const partial: SendReceipt = {
-        ...receipt,
-        status: "partiallyAccepted",
-        recipients: [
-          {
-            role: "to",
-            index: 0,
-            status: "accepted",
-            references: [{ kind: "providerMessageId", value: "accepted-1" }],
-          },
-          { role: "bcc", index: 0, status: "rejected", rejectionCode: "SUPPRESSED" },
-        ],
-      };
-      let calls = 0;
-      const email = makeCustomEmail({
-        send: () =>
-          Effect.sync(() => {
-            calls++;
-            return partial;
-          }),
-      });
-
-      assert.deepStrictEqual(
-        yield* email.send({ ...message, bcc: "private@example.com" }),
-        partial,
-      );
-      assert.strictEqual(calls, 1);
-    }),
-  );
-
-  it.effect("preserves typed failures and never retries an uncertain submission", () =>
-    Effect.gen(function* () {
-      const failure = new EmailError({
-        provider: "custom",
-        operation: "send",
-        acceptance: "unknown",
-        reason: new TransportError(),
-      });
-      let calls = 0;
-      const email = makeCustomEmail({
-        send: () =>
-          Effect.sync(() => {
-            calls++;
-          }).pipe(Effect.andThen(Effect.fail(failure))),
-      });
-
-      const result = yield* email.send(message).pipe(Effect.result);
-      assert.isTrue(Result.isFailure(result));
-      if (Result.isFailure(result)) assert.strictEqual(result.failure, failure);
-      assert.strictEqual(calls, 1);
-    }),
-  );
-
-  it.effect.each([
-    { ...receipt, provider: "another-provider" },
-    { ...receipt, recipients: [{ role: "to", index: 2, status: "accepted" }] },
-    { ...receipt, responseBody: "secret" },
-    { ...receipt, references: [{ kind: "unexpected", value: "secret" }] },
-  ])("treats invalid adapter responses as unknown outcomes", (response) =>
-    Effect.gen(function* () {
-      const email = makeCustomEmail({ send: () => Effect.succeed(response as SendReceipt) });
-      const result = yield* email.send(message).pipe(Effect.result);
-      assert.isTrue(Result.isFailure(result));
-      if (Result.isFailure(result)) {
-        assert.strictEqual(result.failure.reason._tag, "UnexpectedResponseError");
-        assert.strictEqual(result.failure.acceptance, "unknown");
-        assert.notInclude(JSON.stringify(result.failure), "secret");
-      }
     }),
   );
 

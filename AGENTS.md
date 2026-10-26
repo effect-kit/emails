@@ -4,13 +4,16 @@
 
 This is the pnpm/Turborepo workspace for `@effect-kit/emails`, an Effect v4 native library.
 `packages/emails` is the only publishable package. Core contracts, Email.make and custom-provider Layer composition are implemented. Built-in SDK
-adapters, rendering, batching and the public testing Layer remain planned.
+adapters, rendering and batching remain planned. The public testing Layer lives under src/testing/,
+with an explicit src/testing.ts subpath entry; core never re-exports it.
 
 - `packages/emails/src`: domain folders such as message/, delivery/, errors/ and service/.
   Future SDK adapters belong under providers/<provider>/. The root index is a deliberate public API.
 - `packages/emails/test/unit/<domain>`: schema, mapping and focused service behavior tests.
 - `packages/emails/test/integration/<domain>`: composed Effect services/Layers and SDK-boundary tests.
 - `packages/emails/test/fixtures`: reusable inert inputs and focused external substitutes.
+  Reusable adapter contract cases live under fixtures/conformance/; migrate existing checks instead
+  of duplicating them when extending the harness.
 - `packages/emails/test/e2e`: built-package public import/behavior checks via pnpm test:e2e. Keep registry/live
   lanes explicitly named and separate from normal offline tests; never send email in default tests.
 - Root configs: shared Klarity/OXC/TypeScript/Turbo tooling.

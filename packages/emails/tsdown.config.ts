@@ -1,7 +1,7 @@
 import defineConfig from "klarity/tsdown/library";
 
 export default defineConfig({
-  entry: { index: "src/index.ts" },
+  entry: { index: "src/index.ts", testing: "src/testing.ts" },
   exports: { devExports: "workspace-source" },
   unbundle: true,
   // TypeScript 7.1 changes the warning text handled by Klarity’s 7.0 preset.
