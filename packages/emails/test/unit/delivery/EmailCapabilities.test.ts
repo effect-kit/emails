@@ -7,7 +7,6 @@ import { capabilities } from "../../fixtures/email.js";
 
 describe("capabilities", () => {
   it("rejects capability contradictions and invalid deduplication horizons", () => {
-    expect(Schema.is(EmailCapabilities)(capabilities)).toBe(true);
     expect(Schema.is(EmailCapabilities)({ ...capabilities, html: false })).toBe(false);
     expect(Schema.is(EmailCapabilities)({ ...capabilities, attachments: false })).toBe(false);
     expect(

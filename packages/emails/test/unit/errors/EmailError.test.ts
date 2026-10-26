@@ -15,7 +15,6 @@ describe("email errors", () => {
     });
     const encoded = Schema.encodeSync(EmailError)(error);
     expect(encoded.reason._tag).toBe("RateLimitedError");
-    expect(error.message).toBe("Email submission: RateLimitedError");
     expect(JSON.stringify(encoded)).not.toContain("stack");
 
     const recovered = Effect.fail(error).pipe(

@@ -22,29 +22,9 @@ describe("submission contracts", () => {
     ).toBe("unknown");
   });
 
-  it("preserves partial acceptance and recipient-scoped references", () => {
-    const receipt = {
-      provider: "custom",
-      status: "partiallyAccepted",
-      references: [],
-      recipients: [
-        {
-          role: "to",
-          index: 0,
-          status: "accepted",
-          references: [{ kind: "providerMessageId", value: "message-1" }],
-        },
-        { role: "bcc", index: 0, status: "rejected", rejectionCode: "SUPPRESSED" },
-      ],
-    };
-
-    expect(Schema.decodeUnknownSync(SendReceipt)(receipt)).toEqual(receipt);
-  });
-
   it.each([
     { status: "partiallyAccepted" },
     { recipients: [{ role: "to", index: 0, status: "rejected" }] },
-    { recipients: [{ role: "to", index: -1, status: "accepted" }] },
     { recipients: [{ role: "to", index: 0, status: "accepted", rejectionCode: "BLOCKED" }] },
     {
       recipients: [

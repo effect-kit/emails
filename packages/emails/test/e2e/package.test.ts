@@ -4,11 +4,9 @@ import { Email } from "@effect-kit/emails";
 import { describe, expect, it } from "vitest";
 
 describe("built package", () => {
-  it("resolves the public package to emitted JavaScript", () => {
-    expect(import.meta.resolve("@effect-kit/emails")).toMatch(/\/dist\/index\.js$/);
-  });
-
   it("executes the built public API with an offline custom Layer", async () => {
+    expect(import.meta.resolve("@effect-kit/emails")).toMatch(/\/dist\/index\.js$/);
+
     let calls = 0;
     const live = Layer.succeed(
       Email,

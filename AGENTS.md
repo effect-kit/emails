@@ -77,6 +77,10 @@ pnpm check:package
 logic. Add regression, failure-path, resource lifecycle, and adapter contract tests when behavior lands.
 Do not write tests that merely repeat the implementation or TypeScript checks. Never send live emails
 in default tests or CI. Credentialed smoke tests must be explicit and use controlled recipients.
+Keep only tests with a concrete failure or regression they protect. Avoid duplicate happy paths,
+getter/literal assertions, checks of dependency primitives and assertions on already annotated types.
+Keep meaningful public type contracts in compile-only *.types.ts fixtures checked by typecheck:test;
+do not count them as runtime tests. Reuse coverage across suites instead of targeting a test count.
 
 CI runs `pnpm check`, `pnpm test`, `pnpm test:e2e`, and packed-artifact checks after a frozen install. Fix failures caused
 by your work; report skipped checks and pre-existing failures without unrelated changes. Inspect the

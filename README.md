@@ -16,7 +16,8 @@ pnpm check:package
 ```
 
 - `pnpm check`: formatting, linting, source/config and test type checking, and builds.
-- `pnpm test`: Vitest unit, public-type and composed Layer integration tests through Turbo.
+- `pnpm test`: Vitest unit and composed Layer integration tests through Turbo. Public type contracts
+  are compile-only fixtures checked by `pnpm typecheck:test` (also included in `pnpm check`).
 - `pnpm test:e2e`: build and check public emitted-package behavior; no live emails.
 - `pnpm check:package`: build, Publint, and Are the Types Wrong against a packed package.
 - `pnpm dev`: watch the package build.
