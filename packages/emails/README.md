@@ -266,3 +266,5 @@ guarantee, so explicit keys fail before transport invocation.
 
 Local tests use real SMTP sockets and parsed MIME, including rejections, DATA disconnect, interruption,
 pool ownership, native deadlines and file/URL protection. No external SMTP service was used.
+
+[AWS SES v2](docs/providers/ses.md) is available through its optional SDK subpath.

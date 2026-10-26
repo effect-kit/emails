@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-sesv2": "3.1157.0"
+  }
+}

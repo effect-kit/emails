@@ -6,7 +6,8 @@
   "files": [
     "dist",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "docs"
   ],
   "type": "module",
   "sideEffects": false,
@@ -23,6 +24,10 @@
       "workspace-source": "./src/resend.ts",
       "default": "./dist/resend.js"
     },
+    "./ses": {
+      "workspace-source": "./src/ses.ts",
+      "default": "./dist/ses.js"
+    },
     "./testing": {
       "workspace-source": "./src/testing.ts",
       "default": "./dist/testing.js"
@@ -34,6 +39,7 @@
       ".": "./dist/index.js",
       "./nodemailer": "./dist/nodemailer.js",
       "./resend": "./dist/resend.js",
+      "./ses": "./dist/ses.js",
       "./testing": "./dist/testing.js",
       "./package.json": "./package.json"
     },
@@ -54,6 +60,8 @@
     "test:consumer": "tsdown --config tsdown.consumer.config.ts && node .test-dist/consumer.js"
   },
   "devDependencies": {
+    "@aws-sdk/client-sesv2": "3.1157.0",
+    "@azure/communication-email": "1.1.0",
     "@effect/vitest": "catalog:",
     "effect": "catalog:",
     "klarity": "catalog:",
@@ -66,6 +74,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
+    "@aws-sdk/client-sesv2": "3.1157.0",
     "effect": "^4.0.6",
     "nodemailer": "10.2.1",
     "resend": "6.34.1"
@@ -75,6 +84,9 @@
       "optional": true
     },
     "nodemailer": {
+      "optional": true
+    },
+    "@aws-sdk/client-sesv2": {
       "optional": true
     }
   }
