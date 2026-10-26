@@ -1,8 +1,9 @@
 # @effect-kit/emails
 
 Effect v4 native email services and contracts. Core sending works through custom provider Layers.
-The public testing Layer captures offline submissions. Resend and Nodemailer/SMTP are available as
-optional adapters; other SDK adapters, React rendering and batching are planned separately.
+The public testing Layer captures offline submissions. All 16 provider adapters are available through
+optional SDK subpaths; see the [support table](docs/providers/README.md) for installation, configuration,
+capabilities and native cancellation limits. React rendering and portable batching remain planned.
 
 ```ts
 import { Schema } from "effect";
@@ -266,6 +267,3 @@ guarantee, so explicit keys fail before transport invocation.
 
 Local tests use real SMTP sockets and parsed MIME, including rejections, DATA disconnect, interruption,
 pool ownership, native deadlines and file/URL protection. No external SMTP service was used.
-
-[AWS SES v2](docs/providers/ses.md) is available through its optional SDK subpath.
-[Azure Communication Email](docs/providers/azure.md) supports bounded operation polling.

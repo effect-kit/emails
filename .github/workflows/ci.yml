@@ -28,8 +28,4 @@ jobs:
       - run: pnpm test
       - run: pnpm test:e2e
       - run: pnpm check:package
-      - run: pnpm test:consumer
-      - run: pnpm test:consumer -- --fixture resend
-      - run: pnpm test:consumer -- --fixture nodemailer
-      - run: pnpm test:consumer -- --fixture ses
-      - run: pnpm test:consumer -- --fixture azure
+      - run: pnpm test:consumer -- --fixture all

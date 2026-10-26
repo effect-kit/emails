@@ -4,13 +4,13 @@
 
 This is the pnpm/Turborepo workspace for `@effect-kit/emails`, an Effect v4 native library.
 `packages/emails` is the only publishable package. Core contracts, Email.make and custom-provider Layer composition are implemented. Built-in SDK
-adapters include Resend, Nodemailer, SES v2 and Azure Communication Email; rendering and batching remain planned. Provider implementations
+adapters cover all 16 providers listed in packages/emails/docs/providers/README.md; rendering and batching remain planned. Provider implementations
 live under providers/<provider>/ with explicit public subpath entries.
 The public testing Layer lives under src/testing/,
 with an explicit src/testing.ts subpath entry; core never re-exports it.
 
 - `packages/emails/src`: domain folders such as message/, delivery/, errors/ and service/.
-  Future SDK adapters belong under providers/<provider>/. The root index is a deliberate public API.
+  SDK adapters belong under providers/<provider>/. The root index is a deliberate public API.
 - `packages/emails/test/unit/<domain>`: schema, mapping and focused service behavior tests.
 - `packages/emails/test/integration/<domain>`: composed Effect services/Layers and SDK-boundary tests.
 - `packages/emails/test/fixtures`: reusable inert inputs and focused external substitutes.
@@ -95,6 +95,10 @@ Keep only tests with a concrete failure or regression they protect. Avoid duplic
 getter/literal assertions, checks of dependency primitives and assertions on already annotated types.
 Keep meaningful public type contracts in compile-only *.types.ts fixtures checked by typecheck:test;
 do not count them as runtime tests. Reuse coverage across suites instead of targeting a test count.
+
+Default tests guard fetch and Node HTTP requests against external hosts before SDK imports; keep real
+SDK tests on loopback transports or explicit in-memory pipelines. Add each new provider to shared
+conformance cases and its own isolated consumer directory; CI discovers directories via --fixture all.
 
 CI runs `pnpm check`, `pnpm test`, `pnpm test:e2e`, packed-artifact checks and `pnpm test:consumer` after a frozen install. The consumer lane
 can access the npm registry and needs tar; pre-push keeps the offline checks. Fix failures caused

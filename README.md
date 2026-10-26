@@ -1,7 +1,9 @@
 # @effect-kit/emails
 
 An Effect v4 native email package under development. Core contracts, the Email service and
-custom-provider Layers, Resend and Nodemailer/SMTP are implemented. Other providers are planned.
+custom-provider Layers and all 16 planned provider integrations are implemented.
+See the [provider support table](packages/emails/docs/providers/README.md) for SDKs and capability limits.
+Rendering and portable batching are next.
 
 ## Development
 
@@ -32,7 +34,7 @@ pnpm test:consumer
 
 `packages/emails` owns the npm package. Shared tooling lives at the workspace root and uses
 Klarity presets, TypeScript 7, tsdown, Oxfmt/Oxlint, Turbo, Lefthook, and Commitlint. Effect is installed
-at the root for local documentation and as a required peer of the package. Provider SDKs will be
+at the root for local documentation and as a required peer of the package. Provider SDKs are
 optional peers owned by individual subpath adapters.
 
 Lefthook formats/lints staged files, enforces Conventional Commits, and runs verification before push.
@@ -41,7 +43,8 @@ configured.
 
 Consumer fixtures live under `packages/emails/test/fixtures/consumers/<name>/`. Their package.json lists
 only the selected SDK and any required companion peers; the runner supplies Effect and the package
-tarball with peer auto-installation disabled. `core` has no SDK dependencies; `resend` and `nodemailer` each select only their own SDK.
+tarball with peer auto-installation disabled. `core` has no SDK dependencies; every provider fixture selects only its own SDK/companion peers.
+CI runs all 17 isolated fixtures with `pnpm test:consumer -- --fixture all`.
 To select a fixture, run `pnpm test:consumer -- --fixture core`. Each fixture owns a consumer.ts using
 public imports. Fixtures compile in the isolated lane rather than workspace type checks, so workspace
 dependencies cannot conceal missing peers. Temporary installations are removed on success or failure;
