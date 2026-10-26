@@ -38,7 +38,7 @@ const payload = (message: NormalizedEmailMessage) => ({
   })),
 });
 export interface SendGridClient {
-  send(message: ReturnType<typeof payload>): Promise<unknown>;
+  send(message: unknown): Promise<unknown>;
 }
 // The CJS runtime exports this constructor; the published entry declaration types only the singleton.
 const { MailService } = sendgrid as unknown as {

@@ -61,6 +61,7 @@ const make = Effect.fnUntraced(function* (client: AzureClient, options: ClientOp
       const payload = toAzureMessage(message);
       let operationId: string | undefined;
       let observedStatus: string | undefined;
+      let identityChanged = false;
       const references = (): SubmissionReference[] =>
         operationId === undefined ? [] : [{ kind: "operationId", value: operationId }];
       const observe = (raw: unknown) => {
@@ -68,6 +69,10 @@ const make = Effect.fnUntraced(function* (client: AzureClient, options: ClientOp
         if (Result.isFailure(observation)) return;
         const state = Schema.decodeUnknownResult(Operation)(observation.success.parsedBody);
         if (Result.isSuccess(state)) {
+          if (operationId !== undefined && operationId !== state.success.id) {
+            identityChanged = true;
+            return;
+          }
           operationId ??= state.success.id;
           observedStatus = state.success.status;
         }
@@ -101,6 +106,7 @@ const make = Effect.fnUntraced(function* (client: AzureClient, options: ClientOp
           }
         },
         catch: (cause) => {
+          if (identityChanged) return unexpectedResponse("azure", references());
           if (observedStatus === "Failed" || observedStatus === "Canceled")
             return providerFailure("azure", {
               reason: new MessageRejectedError(),
@@ -134,7 +140,7 @@ const make = Effect.fnUntraced(function* (client: AzureClient, options: ClientOp
       );
       const state = Schema.decodeUnknownResult(Operation)(result);
       if (Result.isFailure(state)) return yield* unexpectedResponse("azure", references());
-      if (operationId !== undefined && operationId !== state.success.id)
+      if (identityChanged || (operationId !== undefined && operationId !== state.success.id))
         return yield* unexpectedResponse("azure", references());
       operationId ??= state.success.id;
       if (["Failed", "Canceled"].includes(state.success.status))

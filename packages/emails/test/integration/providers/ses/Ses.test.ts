@@ -1,14 +1,18 @@
 import { assert, describe, it } from "@effect/vitest";
 import { Cause, Duration, Effect, Exit, Fiber, Redacted, Result } from "effect";
+import { Layer } from "effect";
 import { TestClock } from "effect/testing";
 
 import { SESv2Client } from "@aws-sdk/client-sesv2";
 import { Email } from "@effect-kit/emails";
 import * as Ses from "@effect-kit/emails/ses";
+import { afterEach, vi } from "vitest";
 
 import { repeatedSubmission } from "#/test/fixtures/conformance/email-contract.js";
 import { message } from "#/test/fixtures/email.js";
 import { httpServer } from "#/test/fixtures/http/server.js";
+
+afterEach(() => vi.restoreAllMocks());
 
 const credentials = {
   accessKeyId: "offline-access",
@@ -158,5 +162,45 @@ it.effect("keeps borrowed programmer errors as defects", () =>
       assert.isTrue(Result.isSuccess(die));
       if (Result.isSuccess(die)) assert.strictEqual(die.success.defect, defect);
     }
+  }),
+);
+
+it.effect("maps a native credential provider failure before submitting", () =>
+  Effect.gen(function* () {
+    const server = yield* httpServer(() => ({ body: { MessageId: "unused" } }));
+    const layer = Ses.layer({
+      region: "eu-west-1",
+      endpoint: server.url,
+      credentials: async () => {
+        const failure = new Error("private-credential");
+        failure.name = "CredentialsProviderError";
+        throw failure;
+      },
+    });
+    yield* Effect.gen(function* () {
+      const email = yield* Email;
+      const result = yield* email.send(message).pipe(Effect.result);
+      assert.isTrue(Result.isFailure(result));
+      if (Result.isFailure(result)) {
+        assert.strictEqual(result.failure.reason._tag, "AuthenticationError");
+        assert.strictEqual(result.failure.acceptance, "notSubmitted");
+        assert.notInclude(JSON.stringify(result.failure), "private-credential");
+      }
+    }).pipe(Effect.provide(layer));
+    assert.strictEqual(server.requests.length, 0);
+  }),
+);
+
+it.effect("destroys owned clients on scope close and preserves borrowed clients", () =>
+  Effect.gen(function* () {
+    const destroy = vi.spyOn(SESv2Client.prototype, "destroy");
+    yield* Effect.scoped(Layer.build(Ses.layer({ region: "eu-west-1", credentials })));
+    assert.strictEqual(destroy.mock.calls.length, 1);
+    const client = yield* Effect.acquireRelease(
+      Effect.sync(() => new SESv2Client({ region: "eu-west-1", maxAttempts: 1 })),
+      (native) => Effect.sync(() => native.destroy()),
+    );
+    yield* Effect.scoped(Layer.build(Ses.layerClient(client)));
+    assert.strictEqual(destroy.mock.calls.length, 1);
   }),
 );

@@ -87,7 +87,10 @@ export const layer = (options: MailgunConfig): Layer.Layer<Email, ProviderConfig
         options.endpoint !== undefined &&
         (!["http:", "https:"].includes(options.endpoint.protocol) ||
           options.endpoint.username ||
-          options.endpoint.password)
+          options.endpoint.password ||
+          options.endpoint.pathname !== "/" ||
+          options.endpoint.search ||
+          options.endpoint.hash)
       )
         return yield* new ProviderConfigurationError({ provider: "mailgun", field: "endpoint" });
       const client = new Mailgun(FormData).client({

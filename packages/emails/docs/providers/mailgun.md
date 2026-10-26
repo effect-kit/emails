@@ -5,7 +5,8 @@ Import `@effect-kit/emails/mailgun`; use `Mailgun.layer({ apiKey: Redacted.make(
 domain: "mail.example.com", region: "eu" })`. Region is explicitly `us` or `eu`.
 `layerConfig()` reads `MAILGUN_API_KEY`, `MAILGUN_DOMAIN`, `MAILGUN_REGION`.
 `layerClient(client, { domain, timeout? })` borrows a native client. An optional `endpoint: URL`
-allows compatible gateways/local HTTP; region is never inferred from credentials.
+allows compatible gateways/local HTTP and must be an origin URL without a path/query/fragment;
+region is never inferred from credentials.
 
 Supports names, bodies, CC/BCC, multiple reply-to addresses, mail headers and binary MIME attachments.
 Inline CID is rejected: the native multipart API derives CID from filename, which cannot preserve
