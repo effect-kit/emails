@@ -13,6 +13,7 @@ pnpm check
 pnpm test
 pnpm test:e2e
 pnpm check:package
+pnpm test:consumer
 ```
 
 - `pnpm check`: formatting, linting, source/config and test type checking, and builds.
@@ -20,6 +21,9 @@ pnpm check:package
   are compile-only fixtures checked by `pnpm typecheck:test` (also included in `pnpm check`).
 - `pnpm test:e2e`: build and check public emitted-package behavior; no live emails.
 - `pnpm check:package`: build, Publint, and Are the Types Wrong against a packed package.
+- `pnpm test:consumer`: build/pack and install an isolated consumer with only Effect, then run public
+  core/testing imports and NodeNext/Bundler declaration checks. This separate lane may access the npm
+  registry; it needs the platform `tar` command and does not send email.
 - `pnpm dev`: watch the package build.
 - `pnpm format` / `pnpm lint:fix`: apply formatting and lint fixes.
 - `pnpm clean`: remove package build and test output.
@@ -32,8 +36,16 @@ at the root for local documentation and as a required peer of the package. Provi
 optional peers owned by individual subpath adapters.
 
 Lefthook formats/lints staged files, enforces Conventional Commits, and runs verification before push.
-CI runs the same checks with a frozen lockfile. Release automation and provider credentials are not
+CI also runs the isolated consumer lane after a frozen install. Release automation and provider credentials are not
 configured.
+
+Consumer fixtures live under `packages/emails/test/fixtures/consumers/<name>/`. Their package.json lists
+only the selected SDK and any required companion peers; the runner supplies Effect and the package
+tarball with peer auto-installation disabled. Only `core` exists today and has no SDK dependencies.
+To select a fixture, run `pnpm test:consumer -- --fixture core`. Each fixture owns a consumer.ts using
+public imports. Fixtures compile in the isolated lane rather than workspace type checks, so workspace
+dependencies cannot conceal missing peers. Temporary installations are removed on success or failure;
+child processes have a two-minute timeout and diagnostics expose stage/code without registry details.
 
 TypeScript is pinned to **7.1.0-beta**: tsdown 0.23.2’s declaration generator requires its public
 `typescript/async` API, which TypeScript 7.0.2 does not expose. Type checks and declaration builds use

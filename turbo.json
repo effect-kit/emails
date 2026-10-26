@@ -38,6 +38,10 @@
     "test:e2e": {
       "dependsOn": ["build"],
       "outputs": []
+    },
+    "test:consumer": {
+      "dependsOn": ["build"],
+      "cache": false
     }
   }
 }

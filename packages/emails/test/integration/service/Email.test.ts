@@ -52,6 +52,7 @@ describe("custom provider composition", () => {
       const live = CompanyEmailLive.pipe(Layer.provide(clientLayer));
 
       const results = yield* Effect.all([send, send], { concurrency: 2 }).pipe(
+        Effect.tap(() => Effect.sync(() => assert.strictEqual(released, 0))),
         Effect.provide(live),
       );
       assert.deepStrictEqual(results, [receipt, receipt]);

@@ -40,7 +40,8 @@
     "test:watch": "vitest",
     "prepack": "pnpm build",
     "check:package": "publint && attw --pack --profile esm-only",
-    "test:e2e": "vitest run --config vitest.e2e.config.ts"
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "test:consumer": "node test/e2e/consumer/verify-package.ts"
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",

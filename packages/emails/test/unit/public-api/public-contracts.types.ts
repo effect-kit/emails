@@ -7,11 +7,13 @@ import type {
   NormalizedEmailMessage,
   SendReceipt,
 } from "@effect-kit/emails";
+import type { EmailTestOptions } from "@effect-kit/emails/testing";
 
 // Compile-only contracts: typecheck:test checks this file; Vitest never executes it.
 declare const acceptMessage: (message: EmailMessage) => void;
 declare const acceptNormalized: (message: NormalizedEmailMessage) => void;
 declare const acceptAdapter: (adapter: EmailAdapter) => void;
+declare const acceptTestOptions: (options: EmailTestOptions) => void;
 
 const to: string[] = ["ada@example.com"];
 acceptMessage({ from: "sender@example.com", to, subject: "Hello", text: "Hello" });
@@ -31,4 +33,9 @@ acceptAdapter({
   capabilities,
   // @ts-expect-error Infrastructure requirements must be captured by the owning Layer.
   send: () => requiresClient,
+});
+
+acceptTestOptions({
+  // @ts-expect-error Script infrastructure must also be captured before Layer construction.
+  responses: [requiresClient],
 });

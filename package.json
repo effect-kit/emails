@@ -19,7 +19,8 @@
     "check:package": "turbo run check:package",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "test:e2e": "turbo run test:e2e"
+    "test:e2e": "turbo run test:e2e",
+    "test:consumer": "turbo run test:consumer"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

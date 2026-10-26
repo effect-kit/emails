@@ -16,6 +16,9 @@ with an explicit src/testing.ts subpath entry; core never re-exports it.
   of duplicating them when extending the harness.
 - `packages/emails/test/e2e`: built-package public import/behavior checks via pnpm test:e2e. Keep registry/live
   lanes explicitly named and separate from normal offline tests; never send email in default tests.
+- `test/fixtures/consumers/<name>`: isolated package-consumer programs and selected peer manifests;
+  checked by pnpm test:consumer, excluded from workspace type checks. The Node runner and temporary
+  workspace lifecycle live under test/e2e/consumer and test/fixtures/consumers respectively.
 - Root configs: shared Klarity/OXC/TypeScript/Turbo tooling.
 - `/research/`: local, ignored investigations. Never commit these files or require them for builds.
 
@@ -74,6 +77,7 @@ pnpm test
 pnpm test:e2e
 pnpm build
 pnpm check:package
+pnpm test:consumer
 ```
 
 `pnpm check` combines formatting, lint, source/config/test type checks, and builds. Vitest requires real tests; do not add a no-tests exception. Use the installed `@effect/vitest` for Effect behavior and ordinary Vitest for pure
@@ -85,7 +89,8 @@ getter/literal assertions, checks of dependency primitives and assertions on alr
 Keep meaningful public type contracts in compile-only *.types.ts fixtures checked by typecheck:test;
 do not count them as runtime tests. Reuse coverage across suites instead of targeting a test count.
 
-CI runs `pnpm check`, `pnpm test`, `pnpm test:e2e`, and packed-artifact checks after a frozen install. Fix failures caused
+CI runs `pnpm check`, `pnpm test`, `pnpm test:e2e`, packed-artifact checks and `pnpm test:consumer` after a frozen install. The consumer lane
+can access the npm registry and needs tar; pre-push keeps the offline checks. Fix failures caused
 by your work; report skipped checks and pre-existing failures without unrelated changes. Inspect the
 final diff for dead code, unnecessary comments, spacing, public exports, and accidental secrets.
 

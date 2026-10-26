@@ -1,10 +1,12 @@
 {
   "extends": "klarity/tsconfig/test",
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "customConditions": ["workspace-source"],
     "types": ["node"],
     "lib": ["ES2024"]
   },
+  "exclude": ["test/fixtures/consumers/*/**"],
   "include": [
     "src/**/*.ts",
     "test/**/*.ts",
