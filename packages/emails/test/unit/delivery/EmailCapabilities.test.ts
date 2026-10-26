@@ -3,7 +3,7 @@ import { Duration, Schema } from "effect";
 import { EmailCapabilities } from "@effect-kit/emails";
 import { describe, expect, it } from "vitest";
 
-import { capabilities } from "../../fixtures/email.js";
+import { capabilities } from "#/test/fixtures/email.js";
 
 describe("capabilities", () => {
   it("rejects capability contradictions and invalid deduplication horizons", () => {

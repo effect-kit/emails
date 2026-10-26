@@ -2,7 +2,7 @@ import { Duration, Result } from "effect";
 
 import { expect, it } from "vitest";
 
-import { fromResendResponse } from "../../../../src/providers/resend/Response.js";
+import { fromResendResponse } from "#/providers/resend/Response.js";
 
 it.each([
   ["validation_error", 401, "AuthenticationError", "rejected"],

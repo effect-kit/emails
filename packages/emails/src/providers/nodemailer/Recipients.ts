@@ -1,7 +1,7 @@
 import { Schema } from "effect";
 
-import { EmailAddress } from "../../message/EmailMessage.js";
-import type { NormalizedEmailMessage } from "../../message/EmailMessage.js";
+import { EmailAddress } from "#/message/EmailMessage.js";
+import type { NormalizedEmailMessage } from "#/message/EmailMessage.js";
 
 export const Recipient = Schema.Union([EmailAddress, Schema.Struct({ address: EmailAddress })]);
 export type Recipient = typeof Recipient.Type;

@@ -6,8 +6,8 @@ import * as Nodemailer from "@effect-kit/emails/nodemailer";
 import { createTransport } from "nodemailer";
 import { afterEach, vi } from "vitest";
 
-import { message } from "../../../fixtures/email.js";
-import { smtpServer } from "../../../fixtures/smtp/server.js";
+import { message } from "#/test/fixtures/email.js";
+import { smtpServer } from "#/test/fixtures/smtp/server.js";
 
 afterEach(() => vi.restoreAllMocks());
 

@@ -9,9 +9,9 @@ import {
   RecipientRejectedError,
   TimeoutError,
   TransportError,
-} from "../../errors/EmailError.js";
-import type { NormalizedEmailMessage } from "../../message/EmailMessage.js";
-import { Recipient, recipientKey, recipientPositions } from "./Recipients.js";
+} from "#/errors/EmailError.js";
+import type { NormalizedEmailMessage } from "#/message/EmailMessage.js";
+import { Recipient, recipientKey, recipientPositions } from "#/providers/nodemailer/Recipients.js";
 
 const Failure = Schema.Struct({
   code: Schema.Literals([

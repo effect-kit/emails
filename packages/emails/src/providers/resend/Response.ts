@@ -1,7 +1,7 @@
 import { Duration, Result, Schema } from "effect";
 
-import { ProviderCode, SubmissionReference } from "../../delivery/EmailReceipt.js";
-import type { SendReceipt } from "../../delivery/EmailReceipt.js";
+import { ProviderCode, SubmissionReference } from "#/delivery/EmailReceipt.js";
+import type { SendReceipt } from "#/delivery/EmailReceipt.js";
 import {
   AuthenticationError,
   EmailError,
@@ -15,7 +15,7 @@ import {
   TimeoutError,
   TransportError,
   UnexpectedResponseError,
-} from "../../errors/EmailError.js";
+} from "#/errors/EmailError.js";
 
 const Envelope = Schema.Struct({
   data: Schema.Unknown,

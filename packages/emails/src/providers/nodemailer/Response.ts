@@ -1,14 +1,14 @@
 import { Array, Result, Schema } from "effect";
 
-import { SubmissionReference } from "../../delivery/EmailReceipt.js";
-import type { RecipientOutcome, SendReceipt } from "../../delivery/EmailReceipt.js";
+import { SubmissionReference } from "#/delivery/EmailReceipt.js";
+import type { RecipientOutcome, SendReceipt } from "#/delivery/EmailReceipt.js";
 import {
   EmailError,
   RecipientRejectedError,
   UnexpectedResponseError,
-} from "../../errors/EmailError.js";
-import type { NormalizedEmailMessage } from "../../message/EmailMessage.js";
-import { Recipient, recipientKey, recipientPositions } from "./Recipients.js";
+} from "#/errors/EmailError.js";
+import type { NormalizedEmailMessage } from "#/message/EmailMessage.js";
+import { Recipient, recipientKey, recipientPositions } from "#/providers/nodemailer/Recipients.js";
 
 const Receipt = Schema.Struct({
   messageId: Schema.optionalKey(SubmissionReference.fields.value),

@@ -7,8 +7,8 @@ import * as Resend from "@effect-kit/emails/resend";
 import { Resend as ResendSdk } from "resend";
 import { afterEach, vi } from "vitest";
 
-import { repeatedSubmission } from "../../../fixtures/conformance/email-contract.js";
-import { message } from "../../../fixtures/email.js";
+import { repeatedSubmission } from "#/test/fixtures/conformance/email-contract.js";
+import { message } from "#/test/fixtures/email.js";
 
 afterEach(() => vi.restoreAllMocks());
 const live = () => Resend.layer({ apiKey: Redacted.make("offline-test-key") });

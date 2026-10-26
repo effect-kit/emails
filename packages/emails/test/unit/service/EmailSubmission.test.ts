@@ -3,7 +3,7 @@ import { Cause, Deferred, Effect, Exit, Fiber, Result } from "effect";
 
 import type { NormalizedEmailMessage, SendOptions } from "@effect-kit/emails";
 
-import { capabilities, makeCustomEmail, message, receipt } from "../../fixtures/email.js";
+import { capabilities, makeCustomEmail, message, receipt } from "#/test/fixtures/email.js";
 
 describe("submission boundary", () => {
   it.effect("takes a fresh input snapshot on each execution", () =>

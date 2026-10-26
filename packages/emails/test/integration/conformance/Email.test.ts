@@ -4,7 +4,7 @@ import { Email } from "@effect-kit/emails";
 import type { NormalizedEmailMessage } from "@effect-kit/emails";
 import { EmailTest } from "@effect-kit/emails/testing";
 
-import { emailContract } from "../../fixtures/conformance/email-contract.js";
+import { emailContract } from "#/test/fixtures/conformance/email-contract.js";
 
 emailContract("custom adapter contract", (response, capabilities) =>
   Effect.gen(function* () {

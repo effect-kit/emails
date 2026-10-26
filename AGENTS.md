@@ -66,7 +66,12 @@ Use Node >=24.22 and the exact pnpm version in `package.json`. Install with pnpm
 Use the root catalog for shared versions. Prefer platform APIs or existing dependencies over new ones.
 Use Klarity presets with narrow local overrides. Do not add ESLint, Prettier, or EditorConfig.
 TypeScript checks types; tsdown owns emit. Source uses strict checks and `workspace-source` resolution.
-Production relative ESM imports use `.js` extensions. Review generated and packed exports.
+Use #/ aliases for every internal import/re-export: #/message/... resolves under src/, #/test/...
+under test/, and #/examples/... under examples/. Keep .js extensions for TypeScript module specifiers.
+Shared TypeScript paths and explicit Vitest aliases must agree. Examples/consumer fixtures import
+public @effect-kit/emails subpaths. tsdown rewrites aliases to relative emitted imports; do not ship
+unresolved #/ specifiers. The isolated consumer runner is also built by tsdown before Node execution.
+Review generated and packed exports.
 
 After meaningful changes run the applicable commands:
 

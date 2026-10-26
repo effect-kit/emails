@@ -4,7 +4,7 @@ import { Cause, Context, Effect, Exit, Fiber, Layer, Tracer } from "effect";
 import { Email, EmailError, TransportError } from "@effect-kit/emails";
 import type { EmailAdapter, SendReceipt } from "@effect-kit/emails";
 
-import { capabilities, makeCustomEmail, message, receipt } from "../../fixtures/email.js";
+import { capabilities, makeCustomEmail, message, receipt } from "#/test/fixtures/email.js";
 
 class CompanyMailClient extends Context.Service<
   CompanyMailClient,

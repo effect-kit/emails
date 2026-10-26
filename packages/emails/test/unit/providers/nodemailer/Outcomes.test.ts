@@ -3,8 +3,8 @@ import { Result } from "effect";
 import type { NormalizedEmailMessage } from "@effect-kit/emails";
 import { expect, it } from "vitest";
 
-import { fromNodemailerFailure } from "../../../../src/providers/nodemailer/Failure.js";
-import { fromNodemailerResponse } from "../../../../src/providers/nodemailer/Response.js";
+import { fromNodemailerFailure } from "#/providers/nodemailer/Failure.js";
+import { fromNodemailerResponse } from "#/providers/nodemailer/Response.js";
 
 const message: NormalizedEmailMessage = {
   from: { email: "from@example.com" },

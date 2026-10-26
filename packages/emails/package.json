@@ -42,7 +42,7 @@
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
-    "clean": "node --input-type=module -e \"import { rmSync } from 'node:fs'; for (const path of ['dist', 'coverage']) rmSync(path, { recursive: true, force: true })\"",
+    "clean": "node --input-type=module -e \"import { rmSync } from 'node:fs'; for (const path of ['dist', '.test-dist', 'coverage']) rmSync(path, { recursive: true, force: true })\"",
     "lint": "oxlint --deny-warnings src",
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "typecheck:test": "tsc --project tsconfig.test.json --noEmit",
@@ -51,7 +51,7 @@
     "prepack": "pnpm build",
     "check:package": "publint && attw --pack --profile esm-only",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
-    "test:consumer": "node test/e2e/consumer/verify-package.ts"
+    "test:consumer": "tsdown --config tsdown.consumer.config.ts && node .test-dist/consumer.js"
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",

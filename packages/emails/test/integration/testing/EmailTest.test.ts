@@ -4,7 +4,7 @@ import { Cause, Deferred, Effect, Exit, Fiber, Result } from "effect";
 import { Email } from "@effect-kit/emails";
 import { EmailTest } from "@effect-kit/emails/testing";
 
-import { message } from "../../fixtures/email.js";
+import { message } from "#/test/fixtures/email.js";
 
 describe("testing Layer state", () => {
   it.effect(

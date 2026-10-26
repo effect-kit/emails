@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "#/*": ["./src/*"],
+      "#/test/*": ["./test/*"],
+      "#/examples/*": ["./examples/*"]
+    }
+  }
+}

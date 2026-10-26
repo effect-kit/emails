@@ -52,6 +52,10 @@ TypeScript is pinned to **7.1.0-beta**: tsdown 0.23.2’s declaration generator 
 the same compiler version. Revisit the pin when TypeScript 7.1 becomes stable.
 
 Local investigations belong in `/research/`, which is ignored by Git and excluded from package output.
+Internal imports use #/ aliases: #/message/... maps to package src/, #/test/... to test/ and
+#/examples/... to examples/. TypeScript/Vitest resolve these during development, and tsdown rewrites
+them in emitted JavaScript/declarations. Consumer verification builds its Node runner into ignored
+.test-dist/ first; Node does not directly support #/ specifiers. Public consumers need no alias setup.
 Read [AGENTS.md](AGENTS.md) before contributing.
 
 ## License

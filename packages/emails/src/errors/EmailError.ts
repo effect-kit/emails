@@ -1,12 +1,12 @@
 import { Schema } from "effect";
 
-import { RetryAfter } from "../delivery/EmailCapabilities.js";
+import { RetryAfter } from "#/delivery/EmailCapabilities.js";
 import {
   ProviderCode,
   ProviderName,
   RecipientPosition,
   SubmissionReference,
-} from "../delivery/EmailReceipt.js";
+} from "#/delivery/EmailReceipt.js";
 
 export const MessageField = Schema.Literals([
   "from",

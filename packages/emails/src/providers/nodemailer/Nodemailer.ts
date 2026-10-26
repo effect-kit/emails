@@ -2,13 +2,13 @@ import { Config, Duration, Effect, Layer, Redacted, Result, Schema } from "effec
 
 import { createTransport } from "nodemailer";
 
-import type { EmailCapabilities } from "../../delivery/EmailCapabilities.js";
-import { EmailError, TimeoutError } from "../../errors/EmailError.js";
-import { Email } from "../../service/Email.js";
-import { fromNodemailerFailure } from "./Failure.js";
-import type { NodemailerMessage } from "./Message.js";
-import { toNodemailerMessage } from "./Message.js";
-import { fromNodemailerResponse } from "./Response.js";
+import type { EmailCapabilities } from "#/delivery/EmailCapabilities.js";
+import { EmailError, TimeoutError } from "#/errors/EmailError.js";
+import { fromNodemailerFailure } from "#/providers/nodemailer/Failure.js";
+import type { NodemailerMessage } from "#/providers/nodemailer/Message.js";
+import { toNodemailerMessage } from "#/providers/nodemailer/Message.js";
+import { fromNodemailerResponse } from "#/providers/nodemailer/Response.js";
+import { Email } from "#/service/Email.js";
 
 export interface NodemailerClient {
   sendMail(message: NodemailerMessage): Promise<unknown>;

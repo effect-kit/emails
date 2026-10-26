@@ -10,7 +10,7 @@ import type {
   SendReceipt,
 } from "@effect-kit/emails";
 
-import { capabilities, message, receipt } from "../email.js";
+import { capabilities, message, receipt } from "#/test/fixtures/email.js";
 
 /** Exercise the same cold Effect twice and prove each execution makes exactly one attempt. */
 export const repeatedSubmission = Effect.fnUntraced(function* (

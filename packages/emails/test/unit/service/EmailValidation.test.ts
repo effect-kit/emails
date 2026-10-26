@@ -8,7 +8,7 @@ import type {
   SendOptions,
 } from "@effect-kit/emails";
 
-import { capabilities, makeCustomEmail, message, receipt } from "../../fixtures/email.js";
+import { capabilities, makeCustomEmail, message, receipt } from "#/test/fixtures/email.js";
 
 describe("send validation", () => {
   it.effect(

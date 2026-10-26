@@ -5,9 +5,9 @@ import { Email } from "@effect-kit/emails";
 import * as Nodemailer from "@effect-kit/emails/nodemailer";
 import { simpleParser } from "mailparser";
 
-import { repeatedSubmission } from "../../../fixtures/conformance/email-contract.js";
-import { message } from "../../../fixtures/email.js";
-import { smtpError, smtpServer } from "../../../fixtures/smtp/server.js";
+import { repeatedSubmission } from "#/test/fixtures/conformance/email-contract.js";
+import { message } from "#/test/fixtures/email.js";
+import { smtpError, smtpServer } from "#/test/fixtures/smtp/server.js";
 
 describe("real SMTP transport", () => {
   it.effect("preserves decoded MIME, Unicode, binary/CID attachments and BCC privacy", () =>

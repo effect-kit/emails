@@ -1,11 +1,11 @@
 import { Context, Effect, Layer, Ref } from "effect";
 
-import type { EmailCapabilities } from "../delivery/EmailCapabilities.js";
-import type { SendReceipt } from "../delivery/EmailReceipt.js";
-import type { EmailError } from "../errors/EmailError.js";
-import type { NormalizedEmailMessage } from "../message/EmailMessage.js";
-import { Email } from "../service/Email.js";
-import { snapshotMessage } from "../service/MessagePreparation.js";
+import type { EmailCapabilities } from "#/delivery/EmailCapabilities.js";
+import type { SendReceipt } from "#/delivery/EmailReceipt.js";
+import type { EmailError } from "#/errors/EmailError.js";
+import type { NormalizedEmailMessage } from "#/message/EmailMessage.js";
+import { Email } from "#/service/Email.js";
+import { snapshotMessage } from "#/service/MessagePreparation.js";
 
 export interface EmailTestOptions {
   readonly provider?: string;

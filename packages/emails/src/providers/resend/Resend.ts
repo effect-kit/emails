@@ -2,12 +2,12 @@ import { Config, Duration, Effect, Layer, Redacted, Schema } from "effect";
 
 import { Resend as ResendSdk } from "resend";
 
-import type { EmailCapabilities } from "../../delivery/EmailCapabilities.js";
-import { EmailError, InvalidMessageError } from "../../errors/EmailError.js";
-import { Email } from "../../service/Email.js";
-import type { ResendMessage } from "./Message.js";
-import { toResendMessage } from "./Message.js";
-import { fromResendResponse, timeoutError, transportError } from "./Response.js";
+import type { EmailCapabilities } from "#/delivery/EmailCapabilities.js";
+import { EmailError, InvalidMessageError } from "#/errors/EmailError.js";
+import type { ResendMessage } from "#/providers/resend/Message.js";
+import { toResendMessage } from "#/providers/resend/Message.js";
+import { fromResendResponse, timeoutError, transportError } from "#/providers/resend/Response.js";
+import { Email } from "#/service/Email.js";
 
 /** Structural SDK boundary keeps React and Node declarations out of the public adapter API. */
 export interface ResendClient {

@@ -3,7 +3,7 @@ import { join } from "node:path";
 
 import { expect, it } from "vitest";
 
-import { withConsumerWorkspace } from "../../fixtures/consumers/workspace.js";
+import { withConsumerWorkspace } from "#/test/fixtures/consumers/workspace.js";
 
 it("removes a partially populated consumer workspace when verification fails", async () => {
   const failure = new Error("fixture command failed");

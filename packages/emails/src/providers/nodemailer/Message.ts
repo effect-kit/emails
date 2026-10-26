@@ -1,6 +1,6 @@
 import { Base64 } from "effect/encoding";
 
-import type { Mailbox, NormalizedEmailMessage } from "../../message/EmailMessage.js";
+import type { Mailbox, NormalizedEmailMessage } from "#/message/EmailMessage.js";
 
 export interface NodemailerMessage {
   from: { name: string; address: string };

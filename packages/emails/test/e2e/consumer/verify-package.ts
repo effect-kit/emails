@@ -3,22 +3,19 @@ import { execFile } from "node:child_process";
 import { cp, readFile, readdir, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 
 import { Schema } from "effect";
 
-import { withConsumerWorkspace } from "../../fixtures/consumers/workspace.ts";
+import { withConsumerWorkspace } from "#/test/fixtures/consumers/workspace.js";
 
 const exec = promisify(execFile);
-const packageRoot = fileURLToPath(new URL("../../../", import.meta.url));
+const packageRoot = process.cwd();
 const args = process.argv.slice(2);
 assert(args.length === 0 || (args.length === 2 && args[0] === "--fixture"), "Use --fixture <name>");
 const fixture = args[1] ?? "core";
 assert(/^[a-z][a-z0-9-]*$/.test(fixture), "Invalid fixture name");
-const fixtureDirectory = fileURLToPath(
-  new URL(`../../fixtures/consumers/${fixture}/`, import.meta.url),
-);
+const fixtureDirectory = join(packageRoot, "test", "fixtures", "consumers", fixture);
 
 const Versions = Schema.Struct({ version: Schema.String });
 const Dependencies = Schema.Struct({ dependencies: Schema.Record(Schema.String, Schema.String) });

@@ -3,7 +3,7 @@ import { Result, Schema } from "effect";
 import { Attachment, CustomHeaders, EmailMessage } from "@effect-kit/emails";
 import { describe, expect, it } from "vitest";
 
-import { message } from "../../fixtures/email.js";
+import { message } from "#/test/fixtures/email.js";
 
 describe("message contracts", () => {
   it("accepts Unicode content/names, dynamic arrays and preserves recipient case/order/roles", () => {

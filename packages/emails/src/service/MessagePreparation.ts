@@ -1,8 +1,8 @@
 import { Array, Schema, SchemaIssue } from "effect";
 
-import type { EmailCapabilities } from "../delivery/EmailCapabilities.js";
-import { MessageField } from "../errors/EmailError.js";
-import type { EmailFeature, InvalidMessageError } from "../errors/EmailError.js";
+import type { EmailCapabilities } from "#/delivery/EmailCapabilities.js";
+import { MessageField } from "#/errors/EmailError.js";
+import type { EmailFeature, InvalidMessageError } from "#/errors/EmailError.js";
 import type {
   Address,
   EmailMessage,
@@ -10,7 +10,7 @@ import type {
   NormalizedEmailMessage,
   Recipients,
   SendOptions,
-} from "../message/EmailMessage.js";
+} from "#/message/EmailMessage.js";
 
 const formatIssues = SchemaIssue.makeFormatterStandardSchemaV1({
   leafHook: () => "Invalid field",

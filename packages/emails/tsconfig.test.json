@@ -1,17 +1,10 @@
 {
-  "extends": "klarity/tsconfig/test",
+  "extends": ["klarity/tsconfig/test", "./tsconfig.paths.json"],
   "compilerOptions": {
-    "allowImportingTsExtensions": true,
     "customConditions": ["workspace-source"],
     "types": ["node"],
     "lib": ["ES2024"]
   },
   "exclude": ["test/fixtures/consumers/*/**"],
-  "include": [
-    "src/**/*.ts",
-    "test/**/*.ts",
-    "vitest.config.ts",
-    "examples/**/*.ts",
-    "vitest.e2e.config.ts"
-  ]
+  "include": ["src/**/*.ts", "test/**/*.ts", "examples/**/*.ts", "*.config.ts"]
 }

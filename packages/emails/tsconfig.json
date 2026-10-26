@@ -1,5 +1,5 @@
 {
-  "extends": "klarity/tsconfig/library",
+  "extends": ["klarity/tsconfig/library", "./tsconfig.paths.json"],
   "compilerOptions": {
     "customConditions": ["workspace-source"],
     "rootDir": "src",

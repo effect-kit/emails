@@ -1,16 +1,16 @@
 import { Context, Effect, Result, Schema } from "effect";
 
-import { EmailCapabilities } from "../delivery/EmailCapabilities.js";
-import { ProviderName, SendReceipt } from "../delivery/EmailReceipt.js";
+import { EmailCapabilities } from "#/delivery/EmailCapabilities.js";
+import { ProviderName, SendReceipt } from "#/delivery/EmailReceipt.js";
 import {
   EmailError,
   InvalidMessageError,
   UnexpectedResponseError,
   UnsupportedFeatureError,
-} from "../errors/EmailError.js";
-import { EmailMessage, SendOptions } from "../message/EmailMessage.js";
-import type { NormalizedEmailMessage } from "../message/EmailMessage.js";
-import { invalidPaths, snapshotMessage, unsupportedFeature } from "./MessagePreparation.js";
+} from "#/errors/EmailError.js";
+import { EmailMessage, SendOptions } from "#/message/EmailMessage.js";
+import type { NormalizedEmailMessage } from "#/message/EmailMessage.js";
+import { invalidPaths, snapshotMessage, unsupportedFeature } from "#/service/MessagePreparation.js";
 
 export interface EmailService {
   readonly provider: string;
