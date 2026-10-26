@@ -12,6 +12,55 @@ import { smtpServer } from "#/test/fixtures/smtp/server.js";
 afterEach(() => vi.restoreAllMocks());
 
 describe("SMTP ownership and local failures", () => {
+  it.effect("interrupting a borrowed send leaves the caller's pool open for later sends", () =>
+    Effect.gen(function* () {
+      const data = Promise.withResolvers<() => void>();
+      let submissions = 0;
+      const fixture = yield* smtpServer({
+        onData: (stream, _session, callback) => {
+          stream.resume();
+          stream.once("end", () => {
+            submissions++;
+            if (submissions === 1) data.resolve(() => callback(null, "queued offline"));
+            else callback(null, "queued offline");
+          });
+        },
+      });
+      yield* Effect.gen(function* () {
+        const client = yield* Effect.acquireRelease(
+          Effect.sync(() =>
+            createTransport({
+              host: "127.0.0.1",
+              port: fixture.port,
+              pool: true,
+              maxConnections: 1,
+              maxRequeues: 0,
+            }),
+          ),
+          (resource) => Effect.sync(() => resource.close()),
+        );
+        const close = vi.spyOn(client, "close");
+        const send = Effect.gen(function* () {
+          const email = yield* Email;
+          return yield* email.send(message);
+        }).pipe(Effect.provide(Nodemailer.layerClient(client)));
+        const fiber = yield* Effect.forkChild(send);
+        const acknowledge = yield* Effect.promise(() => data.promise);
+        yield* Fiber.interrupt(fiber);
+        const exit = yield* Fiber.await(fiber);
+        assert.isTrue(Exit.isFailure(exit));
+        if (Exit.isFailure(exit)) assert.isTrue(Cause.hasInterruptsOnly(exit.cause));
+        assert.strictEqual(close.mock.calls.length, 0);
+        acknowledge();
+        const receipt = yield* send;
+        assert.strictEqual(receipt.status, "accepted");
+        assert.strictEqual(submissions, 2);
+        assert.strictEqual(close.mock.calls.length, 0);
+      }).pipe(Effect.scoped);
+      yield* Effect.promise(() => fixture.closed);
+    }),
+  );
+
   it.effect(
     "a borrowed pool remains usable after our Layer closes and is closed only by its owner",
     () =>

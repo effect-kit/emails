@@ -42,6 +42,22 @@ describe("real SMTP transport", () => {
           simpleParser(fixture.messages[0] ?? "", { skipImageLinks: true }),
         );
         assert.strictEqual(mime.from?.value[0]?.name, 'Équipe, "Acme"');
+        assert.deepStrictEqual(
+          [mime.to]
+            .flat()
+            .flatMap((addresses) => addresses?.value.map(({ address }) => address) ?? []),
+          ["Ada@example.com", "Ada@example.com"],
+        );
+        assert.deepStrictEqual(
+          [mime.cc]
+            .flat()
+            .flatMap((addresses) => addresses?.value.map(({ address }) => address) ?? []),
+          ["copy@example.com"],
+        );
+        assert.deepStrictEqual(
+          mime.replyTo?.value.map(({ address }) => address),
+          ["reply@example.com", "other@example.com"],
+        );
         assert.strictEqual(mime.text?.trim(), message.text);
         assert.include(mime.html, "Bienvenue 🌍");
         assert.isUndefined(mime.bcc);

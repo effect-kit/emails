@@ -1,5 +1,6 @@
 import { Result, Schema } from "effect";
 
+import { ProviderCode } from "#/delivery/EmailReceipt.js";
 import {
   AuthenticationError,
   EmailError,
@@ -42,13 +43,24 @@ const Failure = Schema.Struct({
   ),
   rejected: Schema.optionalKey(Schema.Array(Recipient)),
 });
+const UnfamiliarFailure = Schema.Struct({ code: ProviderCode });
 
 export const fromNodemailerFailure = (
   cause: unknown,
   message: NormalizedEmailMessage,
 ): EmailError => {
   const decoded = Schema.decodeUnknownResult(Failure)(cause);
-  if (Result.isFailure(decoded)) throw cause;
+  if (Result.isFailure(decoded)) {
+    const unfamiliar = Schema.decodeUnknownResult(UnfamiliarFailure)(cause);
+    if (Result.isFailure(unfamiliar)) throw cause;
+    return new EmailError({
+      provider: "nodemailer",
+      operation: "send",
+      acceptance: "unknown",
+      providerCode: unfamiliar.success.code,
+      reason: new ProviderError(),
+    });
+  }
   const { code, command, syscall, timeoutType, responseCode, rejected } = decoded.success;
   const auth = command?.startsWith("AUTH") || ["EAUTH", "ENOAUTH", "EOAUTH2"].includes(code);
   const beforeSubmission =

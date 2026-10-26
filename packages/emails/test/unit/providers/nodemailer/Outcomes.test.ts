@@ -59,3 +59,17 @@ it("keeps unknown programmer failures as defects", () => {
   const bug = new Error("mapper bug");
   expect(() => fromNodemailerFailure(bug, message)).toThrow(bug);
 });
+
+it("sanitizes unfamiliar or malformed structured SMTP failures", () => {
+  const failure = fromNodemailerFailure(
+    Object.assign(new Error("private-provider-details"), {
+      code: "FUTURE_SMTP_ERROR",
+      responseCode: 9999,
+    }),
+    message,
+  );
+  expect(failure.reason._tag).toBe("ProviderError");
+  expect(failure.acceptance).toBe("unknown");
+  expect(failure.providerCode).toBe("FUTURE_SMTP_ERROR");
+  expect(JSON.stringify(failure)).not.toContain("private-provider-details");
+});
