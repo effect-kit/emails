@@ -1,3 +1,8 @@
+import { Effect } from "effect";
+
+import { Email } from "@effect-kit/emails";
+import type { EmailAdapter, SendReceipt } from "@effect-kit/emails";
+
 export const message = {
   from: "Sender@example.com",
   to: "ada@example.com",
@@ -18,3 +23,13 @@ export const capabilities = {
   inlineAttachments: true,
   idempotency: { mode: "unsupported" },
 } as const;
+
+export const receipt: SendReceipt = { provider: "custom", status: "accepted", references: [] };
+
+export const makeCustomEmail = (overrides: Partial<EmailAdapter> = {}) =>
+  Email.make({
+    provider: "custom",
+    capabilities,
+    send: () => Effect.succeed(receipt),
+    ...overrides,
+  });

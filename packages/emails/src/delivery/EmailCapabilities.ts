@@ -4,6 +4,7 @@ import { Duration, Schema } from "effect";
 export const RetryAfter = Schema.Duration.check(
   Schema.makeFilter((duration) => Duration.isFinite(duration) && !Duration.isNegative(duration)),
 );
+export type RetryAfter = typeof RetryAfter.Type;
 
 export const Idempotency = Schema.Union([
   Schema.Struct({ mode: Schema.Literal("unsupported") }),

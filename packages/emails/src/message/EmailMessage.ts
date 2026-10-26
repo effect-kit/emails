@@ -13,6 +13,7 @@ export const EmailAddress = Metadata.check(
     /^(?=.{1,64}@)[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/,
   ),
 );
+export type EmailAddress = typeof EmailAddress.Type;
 
 export const Mailbox = Schema.Struct({ email: EmailAddress, name: Schema.optionalKey(Metadata) });
 export type Mailbox = typeof Mailbox.Type;
@@ -82,6 +83,7 @@ export const CustomHeaders = Schema.Record(
     );
   }),
 );
+export type CustomHeaders = typeof CustomHeaders.Type;
 
 const Body = Schema.String.check(Schema.isPattern(/\S/), Schema.isPattern(/^[^\u0000]*$/));
 const fields = {
@@ -110,16 +112,16 @@ export const EmailMessage = Schema.Union([
 export type EmailMessage = typeof EmailMessage.Type;
 
 /** Adapter input: mailbox objects and recipient lists, with private copies of attachment bytes. */
-export type NormalizedEmailMessage = Omit<
-  EmailMessage,
-  "from" | "to" | "cc" | "bcc" | "replyTo"
-> & {
-  readonly from: Mailbox;
-  readonly to: ReadonlyArray<Mailbox>;
-  readonly cc?: ReadonlyArray<Mailbox>;
-  readonly bcc?: ReadonlyArray<Mailbox>;
-  readonly replyTo?: ReadonlyArray<Mailbox>;
-};
+type NormalizeMessage<Message extends EmailMessage> = Message extends EmailMessage
+  ? Omit<Message, "from" | "to" | "cc" | "bcc" | "replyTo"> & {
+      readonly from: Mailbox;
+      readonly to: ReadonlyArray<Mailbox>;
+      readonly cc?: ReadonlyArray<Mailbox>;
+      readonly bcc?: ReadonlyArray<Mailbox>;
+      readonly replyTo?: ReadonlyArray<Mailbox>;
+    }
+  : never;
+export type NormalizedEmailMessage = NormalizeMessage<EmailMessage>;
 
 export const SendOptions = Schema.Struct({ idempotencyKey: Schema.optionalKey(Metadata) });
 export type SendOptions = typeof SendOptions.Type;

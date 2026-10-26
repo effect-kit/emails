@@ -1,7 +1,7 @@
 # @effect-kit/emails
 
-Effect v4 native email contracts. The current package exposes message, capability, receipt and error
-schemas; the sending service and built-in provider adapters are being implemented separately.
+Effect v4 native email services and contracts. Core sending works through custom provider Layers.
+Built-in SDK adapters, React rendering, batching and the public testing Layer are planned separately.
 
 ```ts
 import { Schema } from "effect";
@@ -35,3 +35,85 @@ ordinary SchemaError; callers must not log rejected input or schema errors conta
 
 The package is ESM-only and requires Effect ^4.0.6. Core has no SDK, React or Node transport dependency.
 Only dist/, this README and the Apache-2.0 license are included in the package tarball.
+
+## Custom provider
+
+```ts
+import { Effect, Layer } from "effect";
+
+import { Email } from "@effect-kit/emails";
+
+// Offline example: acknowledges locally and does not deliver an email.
+const ExampleLive = Layer.succeed(
+  Email,
+  Email.make({
+    provider: "example",
+    capabilities: {
+      text: true,
+      html: false,
+      htmlAndText: false,
+      senderName: false,
+      cc: false,
+      bcc: false,
+      replyTo: "none",
+      headers: false,
+      attachments: false,
+      inlineAttachments: false,
+      idempotency: { mode: "unsupported" },
+    },
+    send: () =>
+      Effect.succeed({
+        provider: "example",
+        status: "accepted",
+        references: [],
+      }),
+  }),
+);
+
+const program = Effect.gen(function* () {
+  const email = yield* Email;
+  return yield* email.send({
+    from: "hello@example.com",
+    to: "ada@example.com",
+    subject: "Welcome",
+    text: "Your account is ready.",
+  });
+}).pipe(Effect.provide(ExampleLive));
+```
+
+Email.make validates input, enforces capabilities, normalizes addresses to mailbox objects/lists and
+checks receipt shape/provider/recipient positions. Unknown message/options/receipt fields fail rather
+than disappear. Invalid input is EmailError/InvalidMessageError with safe bounded field paths; unknown
+record keys become `*`. An unsupported request is UnsupportedFeatureError before the adapter runs.
+
+Each execution takes a fresh snapshot of mailbox/recipient/header/attachment metadata and copies
+attachment bytes. Mutating input before execution affects that execution; later mutations cannot
+change the adapter's copy. The adapter callback accepts NormalizedEmailMessage and SendOptions and
+returns Effect<SendReceipt, EmailError> with no hidden service requirements. Capture infrastructure
+inside Layer.effect, then return Email.make with a callback closing over that client. See the tracked
+examples/custom-provider.ts in the repository for both forms.
+
+Invalid provider/capability configuration passed to make throws a safe TypeError. Fallible application
+configuration belongs in Layer acquisition. Email.of is the trusted low-level Context constructor;
+it deliberately bypasses make's validation, normalization and instrumentation.
+
+## Failures and reliability
+
+Use Effect.catchReason("EmailError", "RateLimitedError", handler) or Effect.catchReasons to recover
+from specific tagged reasons. Expected failures remain typed; unexpected callback bugs are defects
+and interruption remains interruption. SDK Promise bridges should use Effect.tryPromise and forward
+its AbortSignal. Our core does not acquire/close your clients, run a runtime or start workers.
+
+A successful receipt is submission acknowledgment. Partially accepted receipts require both explicit
+accepted and rejected recipient evidence; absent/unknown recipient evidence never implies delivery.
+A malformed response after invoking the adapter becomes UnexpectedResponseError with unknown acceptance.
+All rejected recipients should be mapped by the adapter into RecipientRejectedError.
+
+There are no implicit retries, failover or generated idempotency keys. An explicitly supplied key is
+forwarded only when the adapter declares support, with provider-specific replay vs duplicate rejection
+semantics. A timeout after submission can mean an accepted email; choose reconciliation/retry policy
+in the application. Reference values are evidence for lookup, not a deduplication guarantee.
+
+One Email.send span records provider, outcome/reason and counts, without adding recipient addresses,
+subjects, content or keys. Custom adapters are responsible for safe error metadata/references and
+should not add sensitive span attributes or raw SDK causes. External exporters/logging remain yours.

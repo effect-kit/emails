@@ -1,7 +1,7 @@
 # @effect-kit/emails
 
-An Effect v4 native email package under development. Core message, capability, receipt and error
-contracts are implemented; the sending service and built-in providers are the next implementation work.
+An Effect v4 native email package under development. Core contracts, the Email service and
+custom-provider Layers are implemented. Built-in SDK adapters are the next provider work.
 
 ## Development
 
@@ -11,16 +11,19 @@ Use Node.js 24.22 or newer and pnpm 12.14.0 (pinned in `package.json`).
 pnpm install
 pnpm check
 pnpm test
+pnpm test:e2e
 pnpm check:package
 ```
 
 - `pnpm check`: formatting, linting, source/config and test type checking, and builds.
-- `pnpm test`: Vitest contract and public-type tests through Turbo.
+- `pnpm test`: Vitest unit, public-type and composed Layer integration tests through Turbo.
+- `pnpm test:e2e`: build and check public emitted-package behavior; no live emails.
 - `pnpm check:package`: build, Publint, and Are the Types Wrong against a packed package.
 - `pnpm dev`: watch the package build.
 - `pnpm format` / `pnpm lint:fix`: apply formatting and lint fixes.
 - `pnpm clean`: remove package build and test output.
-- `pnpm changeset`: record a user-visible package change for versioning.
+- Release notes and versioning are deferred to the final phase, targeting `0.1.0`; do not add
+  per-feature Changesets during implementation.
 
 `packages/emails` owns the npm package. Shared tooling lives at the workspace root and uses
 Klarity presets, TypeScript 7, tsdown, Oxfmt/Oxlint, Turbo, Lefthook, and Commitlint. Effect is installed

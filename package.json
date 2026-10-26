@@ -18,14 +18,15 @@
     "typecheck:test": "turbo run typecheck:test",
     "check:package": "turbo run check:package",
     "changeset": "changeset",
-    "version-packages": "changeset version"
+    "version-packages": "changeset version",
+    "test:e2e": "turbo run test:e2e"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",
     "@changesets/cli": "3.0.3",
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
-    "@effect/vitest": "4.0.6",
+    "@effect/vitest": "catalog:",
     "@types/node": "24.19.2",
     "effect": "catalog:",
     "klarity": "catalog:",

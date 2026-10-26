@@ -3,15 +3,15 @@
 ## Scope and layout
 
 This is the pnpm/Turborepo workspace for `@effect-kit/emails`, an Effect v4 native library.
-`packages/emails` is the only publishable package. Core message, capability, receipt and error schemas are implemented. Do not describe planned
-provider adapters or sending behavior as implemented.
+`packages/emails` is the only publishable package. Core contracts, Email.make and custom-provider Layer composition are implemented. Built-in SDK
+adapters, rendering, batching and the public testing Layer remain planned.
 
 - `packages/emails/src`: domain folders such as message/, delivery/, errors/ and service/.
   Future SDK adapters belong under providers/<provider>/. The root index is a deliberate public API.
 - `packages/emails/test/unit/<domain>`: schema, mapping and focused service behavior tests.
 - `packages/emails/test/integration/<domain>`: composed Effect services/Layers and SDK-boundary tests.
 - `packages/emails/test/fixtures`: reusable inert inputs and focused external substitutes.
-- `packages/emails/test/e2e`: built-package/consumer checks when those checks exist. Keep registry/live
+- `packages/emails/test/e2e`: built-package public import/behavior checks via pnpm test:e2e. Keep registry/live
   lanes explicitly named and separate from normal offline tests; never send email in default tests.
 - Root configs: shared Klarity/OXC/TypeScript/Turbo tooling.
 - `/research/`: local, ignored investigations. Never commit these files or require them for builds.
@@ -68,6 +68,7 @@ pnpm lint
 pnpm typecheck
 pnpm typecheck:test
 pnpm test
+pnpm test:e2e
 pnpm build
 pnpm check:package
 ```
@@ -77,7 +78,7 @@ logic. Add regression, failure-path, resource lifecycle, and adapter contract te
 Do not write tests that merely repeat the implementation or TypeScript checks. Never send live emails
 in default tests or CI. Credentialed smoke tests must be explicit and use controlled recipients.
 
-CI runs `pnpm check`, `pnpm test`, and packed-artifact checks after a frozen install. Fix failures caused
+CI runs `pnpm check`, `pnpm test`, `pnpm test:e2e`, and packed-artifact checks after a frozen install. Fix failures caused
 by your work; report skipped checks and pre-existing failures without unrelated changes. Inspect the
 final diff for dead code, unnecessary comments, spacing, public exports, and accidental secrets.
 

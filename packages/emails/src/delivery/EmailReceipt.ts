@@ -3,7 +3,9 @@ import { Schema } from "effect";
 export const ProviderName = Schema.String.check(
   Schema.isPattern(/^[A-Za-z0-9@][A-Za-z0-9@._/-]{0,127}$/),
 );
+export type ProviderName = typeof ProviderName.Type;
 export const ProviderCode = Schema.String.check(Schema.isPattern(/^[A-Za-z0-9_.:-]{1,128}$/));
+export type ProviderCode = typeof ProviderCode.Type;
 
 const ReferenceValue = Schema.String.check(
   Schema.isPattern(/\S/),

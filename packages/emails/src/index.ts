@@ -1,4 +1,6 @@
 export { EmailCapabilities, Idempotency, RetryAfter } from "./delivery/EmailCapabilities.js";
+export { Email } from "./service/Email.js";
+export type { EmailAdapter, EmailService } from "./service/Email.js";
 export {
   AuthenticationError,
   EmailError,

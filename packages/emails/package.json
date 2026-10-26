@@ -34,10 +34,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "prepack": "pnpm build",
-    "check:package": "publint && attw --pack --profile esm-only"
+    "check:package": "publint && attw --pack --profile esm-only",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts"
   },
   "devDependencies": {
-    "@effect/vitest": "4.0.6",
+    "@effect/vitest": "catalog:",
     "effect": "catalog:",
     "klarity": "catalog:",
     "tsdown": "catalog:",
