@@ -3,6 +3,7 @@ import defineConfig from "klarity/tsdown/library";
 export default defineConfig({
   entry: {
     index: "src/index.ts",
+    azure: "src/azure.ts",
     ses: "src/ses.ts",
     testing: "src/testing.ts",
     resend: "src/resend.ts",

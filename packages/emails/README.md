@@ -268,3 +268,4 @@ Local tests use real SMTP sockets and parsed MIME, including rejections, DATA di
 pool ownership, native deadlines and file/URL protection. No external SMTP service was used.
 
 [AWS SES v2](docs/providers/ses.md) is available through its optional SDK subpath.
+[Azure Communication Email](docs/providers/azure.md) supports bounded operation polling.

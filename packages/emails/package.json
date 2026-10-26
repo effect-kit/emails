@@ -32,7 +32,11 @@
       "workspace-source": "./src/testing.ts",
       "default": "./dist/testing.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./azure": {
+      "workspace-source": "./src/azure.ts",
+      "default": "./dist/azure.js"
+    }
   },
   "publishConfig": {
     "exports": {
@@ -41,7 +45,8 @@
       "./resend": "./dist/resend.js",
       "./ses": "./dist/ses.js",
       "./testing": "./dist/testing.js",
-      "./package.json": "./package.json"
+      "./package.json": "./package.json",
+      "./azure": "./dist/azure.js"
     },
     "access": "public"
   },
@@ -75,6 +80,7 @@
   },
   "peerDependencies": {
     "@aws-sdk/client-sesv2": "3.1157.0",
+    "@azure/communication-email": "1.1.0",
     "effect": "^4.0.6",
     "nodemailer": "10.2.1",
     "resend": "6.34.1"
@@ -87,6 +93,9 @@
       "optional": true
     },
     "@aws-sdk/client-sesv2": {
+      "optional": true
+    },
+    "@azure/communication-email": {
       "optional": true
     }
   }
