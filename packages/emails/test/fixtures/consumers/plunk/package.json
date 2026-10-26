@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@plunk/node": "3.0.3"
+  }
+}

@@ -104,11 +104,12 @@ const make = Effect.fnUntraced(function* (client: BrevoClient, options: ClientOp
           reason: new InvalidMessageError({ paths: [["headers"]] }),
           acceptance: "notSubmitted",
         });
+      const request = payload(message, sendOptions);
       const response = yield* submission(
         "brevo",
         timeout,
         (abortSignal) =>
-          client.transactionalEmails.sendTransacEmail(payload(message, sendOptions), {
+          client.transactionalEmails.sendTransacEmail(request, {
             abortSignal,
             maxRetries: 0,
             timeoutInSeconds: Duration.toSeconds(timeout),

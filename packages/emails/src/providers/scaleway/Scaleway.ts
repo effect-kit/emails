@@ -72,10 +72,11 @@ const make = Effect.fnUntraced(function* (client: ScalewayClient, options: Clien
     provider: "scaleway",
     capabilities: { ...standardCapabilities, inlineAttachments: false },
     send: Effect.fnUntraced(function* (message) {
+      const request = payload(message, options);
       const response = yield* submission(
         "scaleway",
         timeout,
-        (signal) => client.createEmail(payload(message, options), { signal }),
+        (signal) => client.createEmail(request, { signal }),
         (cause) =>
           cause instanceof Errors.QuotasExceededError
             ? providerFailure("scaleway", {

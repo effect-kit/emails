@@ -64,10 +64,11 @@ const make = Effect.fnUntraced(function* (client: SendGridClient, options: Clien
     provider: "sendgrid",
     capabilities: { ...standardCapabilities, replyTo: "single" },
     send: Effect.fnUntraced(function* (message) {
+      const request = payload(message);
       const response = yield* submission(
         "sendgrid",
         timeout,
-        () => client.send(payload(message)),
+        () => client.send(request),
         (cause) => {
           const code = Schema.decodeUnknownResult(Schema.Struct({ code: Schema.Number }))(cause);
           return Result.isSuccess(code)

@@ -72,10 +72,11 @@ const make = Effect.fnUntraced(function* (client: MailerSendClient, options: Cli
           reason: new InvalidMessageError({ paths: [["headers"]] }),
           acceptance: "notSubmitted",
         });
+      const request = payload(message);
       const response = yield* submission(
         "mailersend",
         timeout,
-        () => client.email.send(payload(message)),
+        () => client.email.send(request),
         (cause) => httpFailure("mailersend", cause),
       );
       const decoded = Schema.decodeUnknownResult(Response)(response);

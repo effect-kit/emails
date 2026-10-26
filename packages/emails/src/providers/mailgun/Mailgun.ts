@@ -59,10 +59,11 @@ const make = Effect.fnUntraced(function* (client: MailgunClient, options: Client
     provider: "mailgun",
     capabilities: { ...standardCapabilities, inlineAttachments: false },
     send: Effect.fnUntraced(function* (message) {
+      const request = payload(message);
       const response = yield* submission(
         "mailgun",
         timeout,
-        () => client.messages.create(options.domain, payload(message)),
+        () => client.messages.create(options.domain, request),
         (cause) => httpFailure("mailgun", cause),
       );
       const decoded = Schema.decodeUnknownResult(Response)(response);

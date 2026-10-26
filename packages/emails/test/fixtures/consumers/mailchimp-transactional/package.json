@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@mailchimp/mailchimp_transactional": "1.4.1"
+  }
+}

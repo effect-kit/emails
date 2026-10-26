@@ -66,10 +66,11 @@ const make = Effect.fnUntraced(function* (client: MailtrapClient, options: Clien
     provider,
     capabilities: { ...standardCapabilities, replyTo: "single" },
     send: Effect.fnUntraced(function* (message) {
+      const request = payload(message);
       const response = yield* submission(
         provider,
         timeout,
-        () => client.send(payload(message)),
+        () => client.send(request),
         (cause) => {
           const nested = Schema.decodeUnknownResult(NestedFailure)(cause);
           return httpFailure(provider, Result.isSuccess(nested) ? nested.success.cause : cause);

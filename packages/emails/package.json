@@ -24,6 +24,18 @@
       "workspace-source": "./src/brevo.ts",
       "default": "./dist/brevo.js"
     },
+    "./eusend": {
+      "workspace-source": "./src/eusend.ts",
+      "default": "./dist/eusend.js"
+    },
+    "./lettermint": {
+      "workspace-source": "./src/lettermint.ts",
+      "default": "./dist/lettermint.js"
+    },
+    "./mailchimp-transactional": {
+      "workspace-source": "./src/mailchimp-transactional.ts",
+      "default": "./dist/mailchimp-transactional.js"
+    },
     "./mailersend": {
       "workspace-source": "./src/mailersend.ts",
       "default": "./dist/mailersend.js"
@@ -39,6 +51,10 @@
     "./nodemailer": {
       "workspace-source": "./src/nodemailer.ts",
       "default": "./dist/nodemailer.js"
+    },
+    "./plunk": {
+      "workspace-source": "./src/plunk.ts",
+      "default": "./dist/plunk.js"
     },
     "./postmark": {
       "workspace-source": "./src/postmark.ts",
@@ -64,6 +80,10 @@
       "workspace-source": "./src/testing.ts",
       "default": "./dist/testing.js"
     },
+    "./zeptomail": {
+      "workspace-source": "./src/zeptomail.ts",
+      "default": "./dist/zeptomail.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -71,16 +91,21 @@
       ".": "./dist/index.js",
       "./azure": "./dist/azure.js",
       "./brevo": "./dist/brevo.js",
+      "./eusend": "./dist/eusend.js",
+      "./lettermint": "./dist/lettermint.js",
+      "./mailchimp-transactional": "./dist/mailchimp-transactional.js",
       "./mailersend": "./dist/mailersend.js",
       "./mailgun": "./dist/mailgun.js",
       "./mailtrap": "./dist/mailtrap.js",
       "./nodemailer": "./dist/nodemailer.js",
+      "./plunk": "./dist/plunk.js",
       "./postmark": "./dist/postmark.js",
       "./resend": "./dist/resend.js",
       "./scaleway": "./dist/scaleway.js",
       "./sendgrid": "./dist/sendgrid.js",
       "./ses": "./dist/ses.js",
       "./testing": "./dist/testing.js",
+      "./zeptomail": "./dist/zeptomail.js",
       "./package.json": "./package.json"
     },
     "access": "public"
@@ -130,18 +155,23 @@
   "peerDependencies": {
     "@aws-sdk/client-sesv2": "3.1157.0",
     "@azure/communication-email": "1.1.0",
+    "@eusend_dev/sdk": "0.19.0",
     "@getbrevo/brevo": "6.2.0",
+    "@mailchimp/mailchimp_transactional": "1.4.1",
+    "@plunk/node": "3.0.3",
     "@scaleway/sdk-client": "2.16.0",
     "@scaleway/sdk-tem": "2.16.3",
     "@sendgrid/mail": "8.1.6",
     "effect": "^4.0.6",
     "form-data": "4.0.5",
+    "lettermint": "3.2.0",
     "mailersend": "3.6.0",
     "mailgun.js": "14.1.0",
     "mailtrap": "5.0.0",
     "nodemailer": "10.2.1",
     "postmark": "5.1.0",
-    "resend": "6.34.1"
+    "resend": "6.34.1",
+    "zeptomail": "8.0.1"
   },
   "peerDependenciesMeta": {
     "resend": {
@@ -181,6 +211,21 @@
       "optional": true
     },
     "@scaleway/sdk-client": {
+      "optional": true
+    },
+    "lettermint": {
+      "optional": true
+    },
+    "@eusend_dev/sdk": {
+      "optional": true
+    },
+    "zeptomail": {
+      "optional": true
+    },
+    "@plunk/node": {
+      "optional": true
+    },
+    "@mailchimp/mailchimp_transactional": {
       "optional": true
     }
   }

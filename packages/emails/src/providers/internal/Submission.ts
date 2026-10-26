@@ -65,7 +65,17 @@ export const httpFailure = (provider: string, cause: unknown): EmailError => {
         code: failure.code === undefined ? undefined : String(failure.code),
         ...(["ETIMEDOUT", "ECONNABORTED"].includes(String(failure.code))
           ? { reason: new TimeoutError() }
-          : {}),
+          : status === undefined &&
+              [
+                "ECONNRESET",
+                "ECONNREFUSED",
+                "EPIPE",
+                "ENOTFOUND",
+                "EAI_AGAIN",
+                "EHOSTUNREACH",
+              ].includes(String(failure.code))
+            ? { reason: new TransportError() }
+            : {}),
       });
   }
   if (cause instanceof TypeError || cause instanceof DOMException)

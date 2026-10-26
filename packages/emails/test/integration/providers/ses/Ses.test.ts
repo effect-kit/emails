@@ -1,5 +1,5 @@
 import { assert, describe, it } from "@effect/vitest";
-import { Duration, Effect, Fiber, Redacted, Result } from "effect";
+import { Cause, Duration, Effect, Exit, Fiber, Redacted, Result } from "effect";
 import { TestClock } from "effect/testing";
 
 import { SESv2Client } from "@aws-sdk/client-sesv2";
@@ -135,3 +135,28 @@ describe("SES SDK boundary", () => {
     }),
   );
 });
+
+it.effect("keeps borrowed programmer errors as defects", () =>
+  Effect.gen(function* () {
+    const defect = new Error("SDK programmer defect");
+    const exit = yield* Effect.gen(function* () {
+      const email = yield* Email;
+      return yield* email.send(message);
+    }).pipe(
+      Effect.provide(
+        Ses.layerClient({
+          send: async () => {
+            throw defect;
+          },
+        }),
+      ),
+      Effect.exit,
+    );
+    assert.isTrue(Exit.isFailure(exit));
+    if (Exit.isFailure(exit)) {
+      const die = Cause.findDie(exit.cause);
+      assert.isTrue(Result.isSuccess(die));
+      if (Result.isSuccess(die)) assert.strictEqual(die.success.defect, defect);
+    }
+  }),
+);

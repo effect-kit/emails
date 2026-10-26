@@ -72,10 +72,11 @@ const make = Effect.fnUntraced(function* (client: PostmarkClient, options: Clien
     provider: "postmark",
     capabilities: standardCapabilities,
     send: Effect.fnUntraced(function* (message) {
+      const request = payload(message, options.messageStream);
       const response = yield* submission(
         "postmark",
         timeout,
-        () => client.sendEmail(payload(message, options.messageStream)),
+        () => client.sendEmail(request),
         failure,
       );
       const decoded = Schema.decodeUnknownResult(Response)(response);
