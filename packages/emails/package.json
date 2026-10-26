@@ -20,6 +20,14 @@
       "workspace-source": "./src/azure.ts",
       "default": "./dist/azure.js"
     },
+    "./mailersend": {
+      "workspace-source": "./src/mailersend.ts",
+      "default": "./dist/mailersend.js"
+    },
+    "./mailgun": {
+      "workspace-source": "./src/mailgun.ts",
+      "default": "./dist/mailgun.js"
+    },
     "./nodemailer": {
       "workspace-source": "./src/nodemailer.ts",
       "default": "./dist/nodemailer.js"
@@ -31,6 +39,10 @@
     "./resend": {
       "workspace-source": "./src/resend.ts",
       "default": "./dist/resend.js"
+    },
+    "./sendgrid": {
+      "workspace-source": "./src/sendgrid.ts",
+      "default": "./dist/sendgrid.js"
     },
     "./ses": {
       "workspace-source": "./src/ses.ts",
@@ -46,9 +58,12 @@
     "exports": {
       ".": "./dist/index.js",
       "./azure": "./dist/azure.js",
+      "./mailersend": "./dist/mailersend.js",
+      "./mailgun": "./dist/mailgun.js",
       "./nodemailer": "./dist/nodemailer.js",
       "./postmark": "./dist/postmark.js",
       "./resend": "./dist/resend.js",
+      "./sendgrid": "./dist/sendgrid.js",
       "./ses": "./dist/ses.js",
       "./testing": "./dist/testing.js",
       "./package.json": "./package.json"
@@ -100,7 +115,11 @@
   "peerDependencies": {
     "@aws-sdk/client-sesv2": "3.1157.0",
     "@azure/communication-email": "1.1.0",
+    "@sendgrid/mail": "8.1.6",
     "effect": "^4.0.6",
+    "form-data": "4.0.5",
+    "mailersend": "3.6.0",
+    "mailgun.js": "14.1.0",
     "nodemailer": "10.2.1",
     "postmark": "5.1.0",
     "resend": "6.34.1"
@@ -119,6 +138,18 @@
       "optional": true
     },
     "postmark": {
+      "optional": true
+    },
+    "@sendgrid/mail": {
+      "optional": true
+    },
+    "mailgun.js": {
+      "optional": true
+    },
+    "form-data": {
+      "optional": true
+    },
+    "mailersend": {
       "optional": true
     }
   }
