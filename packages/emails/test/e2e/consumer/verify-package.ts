@@ -25,6 +25,9 @@ const Dependencies = Schema.Struct({ dependencies: Schema.Record(Schema.String, 
 const Manifest = Schema.Struct({
   exports: Schema.Record(Schema.String, Schema.String),
   peerDependencies: Schema.Record(Schema.String, Schema.String),
+  peerDependenciesMeta: Schema.optionalKey(
+    Schema.Record(Schema.String, Schema.Struct({ optional: Schema.Boolean })),
+  ),
   dependencies: Schema.optionalKey(Schema.Record(Schema.String, Schema.String)),
 });
 const parse = <S extends Schema.Top & { readonly DecodingServices: never }>(
@@ -83,6 +86,9 @@ await withConsumerWorkspace(async (directory) => {
     "Core must not acquire runtime dependencies",
   );
   assert.equal(manifest.peerDependencies.effect, "^4.0.6");
+  for (const peer of Object.keys(manifest.peerDependencies)) {
+    if (peer !== "effect") assert.equal(manifest.peerDependenciesMeta?.[peer]?.optional, true);
+  }
   assert.equal(manifest.exports["."], "./dist/index.js");
   assert.equal(manifest.exports["./testing"], "./dist/testing.js");
   assert(!JSON.stringify(manifest.exports).includes("workspace-source"));

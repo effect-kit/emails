@@ -56,7 +56,7 @@ const recovered = await Effect.runPromise(
 if (recovered !== "limited") throw new Error("Packed error reasons did not recover");
 
 // A selected peer that is absent must fail normally, while core/testing stay importable.
-const absentPeer = "resend";
+const absentPeer = "@effect-kit/emails/resend";
 try {
   await import(absentPeer);
   throw new Error("An unused provider SDK leaked into the isolated consumer");

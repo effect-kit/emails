@@ -1,8 +1,8 @@
 # @effect-kit/emails
 
 Effect v4 native email services and contracts. Core sending works through custom provider Layers.
-The public testing Layer captures offline submissions. Built-in SDK adapters, React rendering and
-batching are planned separately.
+The public testing Layer captures offline submissions. Resend is available as an optional adapter;
+other SDK adapters, React rendering and batching are planned separately.
 
 ```ts
 import { Schema } from "effect";
@@ -162,3 +162,46 @@ Default capabilities support all message fields with multiple replyTo addresses;
 unsupported. Supply capabilities matching your real provider to test restrictions. Capability overrides
 test feature enforcement; this Layer does not emulate provider deduplication, limits, retries or network
 protocols. Explicitly script those outcomes when testing application policy.
+
+## Resend
+
+```sh
+pnpm add @effect-kit/emails effect resend@6.34.1
+```
+
+```ts
+import { Config, Effect, Redacted } from "effect";
+
+import * as Resend from "@effect-kit/emails/resend";
+
+// Resolve RESEND_API_KEY through the application's Effect ConfigProvider.
+const live = Resend.layerConfig();
+// Or supply an already redacted credential: Resend.layer({ apiKey }).
+// Custom configuration: Resend.layerConfig(Config.all({ apiKey: Config.Redacted("MAIL_KEY") })).
+// Reuse a client: Resend.layerClient(client).
+```
+
+The tested SDK/peer is exactly 6.34.1. `ResendConfig` accepts apiKey (Redacted<string>), optional baseUrl
+(URL) and timeout (Effect Duration, default 30 seconds). `layerClient(client, { timeout? })` borrows a
+structural ResendClient; it does not mutate or close the client. Public declarations do not expose the
+SDK's React/Buffer types, so using our owned factory requires neither React nor a renderer.
+
+All core message features are supported, including multiple replyTo addresses and inline attachments.
+Names are quoted/escaped and bytes encoded once. Explicit idempotency keys have a 256-character limit;
+the provider documents replay for 24 hours. Key conflicts remain typed with unknown acceptance because
+a matching operation may already exist. We generate no keys and add no retries or failover.
+See [Resend idempotency](https://resend.com/docs/dashboard/emails/idempotency-keys).
+
+Resolved error envelopes and known Promise transport failures become safe EmailError values; 5xx,
+transport failures, timeouts and malformed successes have unknown acceptance. Quota/rate/auth/permission
+and validation reasons stay distinct. Nonnegative numeric Retry-After hints use Effect Duration; HTTP-date
+hints are currently omitted. Success receipts retain provider IDs and valid x-request-id correlation.
+Configuration acquisition can fail with ResendConfigurationError (safe field only) or ConfigError.
+
+The owned client uses explicit endpoint/user-agent settings and suppresses the pinned SDK's raw-error
+logging hook. Borrowed clients retain their own logging, endpoint and retry policy: SDK 6.34.1 logs raw
+provider errors outside production, so applications using layerClient must configure their client/runtime
+logging policy accordingly. AbortSignal reaches SDK requests; a timeout/interruption cannot prove remote
+non-acceptance. Native batch, templates, scheduling and React rendering are outside this adapter.
+
+Local tests run the real SDK through a controlled fetch transport; no live Resend send has been run.

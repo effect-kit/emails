@@ -12,6 +12,19 @@ import type {
 
 import { capabilities, message, receipt } from "../email.js";
 
+/** Exercise the same cold Effect twice and prove each execution makes exactly one attempt. */
+export const repeatedSubmission = Effect.fnUntraced(function* (
+  send: Effect.Effect<SendReceipt, EmailError>,
+  attempts: Effect.Effect<number>,
+) {
+  assert.strictEqual(yield* attempts, 0);
+  const first = yield* send;
+  assert.strictEqual(yield* attempts, 1);
+  const second = yield* send;
+  assert.strictEqual(yield* attempts, 2);
+  return [first, second] as const;
+});
+
 export interface EmailContractFixture {
   readonly email: EmailService;
   readonly messages: Effect.Effect<ReadonlyArray<NormalizedEmailMessage>>;
@@ -35,10 +48,11 @@ export const emailContract = (name: string, make: MakeEmailContractFixture) => {
           bcc: "private@example.com",
         };
         const send = fixture.email.send(input);
-        assert.lengthOf(yield* fixture.messages, 0);
-
-        assert.deepStrictEqual(yield* send, receipt);
-        yield* send;
+        const [first] = yield* repeatedSubmission(
+          send,
+          Effect.map(fixture.messages, (messages) => messages.length),
+        );
+        assert.deepStrictEqual(first, receipt);
         const captured = yield* fixture.messages;
         assert.lengthOf(captured, 2);
         assert.deepStrictEqual(captured[0]?.to, [

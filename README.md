@@ -1,7 +1,7 @@
 # @effect-kit/emails
 
 An Effect v4 native email package under development. Core contracts, the Email service and
-custom-provider Layers are implemented. Built-in SDK adapters are the next provider work.
+custom-provider Layers and the Resend adapter are implemented. Nodemailer is the next provider work.
 
 ## Development
 
@@ -41,7 +41,7 @@ configured.
 
 Consumer fixtures live under `packages/emails/test/fixtures/consumers/<name>/`. Their package.json lists
 only the selected SDK and any required companion peers; the runner supplies Effect and the package
-tarball with peer auto-installation disabled. Only `core` exists today and has no SDK dependencies.
+tarball with peer auto-installation disabled. `core` has no SDK dependencies; `resend` selects only the Resend SDK.
 To select a fixture, run `pnpm test:consumer -- --fixture core`. Each fixture owns a consumer.ts using
 public imports. Fixtures compile in the isolated lane rather than workspace type checks, so workspace
 dependencies cannot conceal missing peers. Temporary installations are removed on success or failure;
