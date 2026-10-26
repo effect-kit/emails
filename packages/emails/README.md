@@ -1,8 +1,8 @@
 # @effect-kit/emails
 
 Effect v4 native email services and contracts. Core sending works through custom provider Layers.
-The public testing Layer captures offline submissions. Resend is available as an optional adapter;
-other SDK adapters, React rendering and batching are planned separately.
+The public testing Layer captures offline submissions. Resend and Nodemailer/SMTP are available as
+optional adapters; other SDK adapters, React rendering and batching are planned separately.
 
 ```ts
 import { Schema } from "effect";
@@ -205,3 +205,64 @@ logging policy accordingly. AbortSignal reaches SDK requests; a timeout/interrup
 non-acceptance. Native batch, templates, scheduling and React rendering are outside this adapter.
 
 Local tests run the real SDK through a controlled fetch transport; no live Resend send has been run.
+
+## Nodemailer / SMTP
+
+```sh
+pnpm add @effect-kit/emails effect nodemailer@10.2.1
+```
+
+```ts
+import * as Nodemailer from "@effect-kit/emails/nodemailer";
+
+const live = Nodemailer.layer({
+  transport: {
+    host: "smtp.example.com",
+    port: 465,
+    secure: true,
+    auth: { user: smtpUser, pass: smtpPassword }, // pass is Redacted<string>
+    pool: true,
+    maxConnections: 5,
+  },
+});
+```
+
+The tested SDK/peer is exactly 10.2.1. This is a Node-only adapter. Its public structural client/config
+types do not expose Buffer or SDK-wide declarations. layerConfig() reads SMTP_HOST, SMTP_PORT (587),
+SMTP_SECURE (false), SMTP_USER and SMTP_PASSWORD through Effect Config; default Config requires auth.
+Pass a custom Config<NodemailerConfig> for anonymous SMTP or other settings. Acquisition failures
+are ConfigError or NodemailerConfigurationError, separate from send failures.
+
+transport supports host/port, secure/requireTLS, password auth, pool/maxConnections/maxMessages and
+connectionTimeout/greetingTimeout/socketTimeout as positive finite Effect Durations. Defaults are
+10s connection, 10s greeting and 30s socket waits. Top-level timeout bounds the Effect operation to
+30s by default. Credentials are unwrapped only while constructing the SDK transport.
+
+Owned transports disable pool requeues (maxRequeues: 0) and raw SDK logging. They are acquired once
+per Layer scope and closed on release, including acquisition failure after creation. Closing drains
+already-started native operations, bounded by socket timeouts; cleanup can outlast the Effect operation's
+deadline. SMTP cannot cancel one send. Interruption/timeout does not prove remote rejection; owned
+scope cleanup waits for in-flight native completion.
+
+layerClient(client, { timeout? }) borrows an SMTP-compatible transporter and never closes or mutates
+it. A native borrowed pool must explicitly configure maxRequeues: 0 or acquisition fails. Custom
+clients own their retry/logging/socket-timeout policy. A borrowed native operation can continue after
+Effect interruption; closing the caller's pool to cancel one message would disrupt other callers.
+
+Message translation fixes the SMTP envelope to the declared sender/recipients, protects BCC privacy,
+and supplies byte-only attachments with explicit encoding. File/URL reads are disabled on every
+message. Core fields and raw/alternative content are supplied explicitly to prevent content defaults
+from changing them. Borrowed plugins remain trusted application code; avoid defaults/plugins that
+change recipients or MIME content. Advanced OAuth, DKIM, custom TLS and other SDK configuration can
+use an application-configured borrowed client.
+
+Receipts distinguish SMTP Message-ID references from provider lookup IDs. Outcomes use original
+role/index positions, including duplicates. Domain case is ignored for association; local-part case
+is preserved. Ambiguous/missing evidence stays unknown. Explicit mixed acceptance returns
+partiallyAccepted; all-recipient rejection is typed. Raw server response text is never retained.
+SMTP response class and stage determine failures: temporary errors differ from permanent auth or
+recipient rejection; connection loss after DATA stays unknown. Generic SMTP has no idempotency
+guarantee, so explicit keys fail before transport invocation.
+
+Local tests use real SMTP sockets and parsed MIME, including rejections, DATA disconnect, interruption,
+pool ownership, native deadlines and file/URL protection. No external SMTP service was used.

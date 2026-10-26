@@ -30,3 +30,4 @@ jobs:
       - run: pnpm check:package
       - run: pnpm test:consumer
       - run: pnpm test:consumer -- --fixture resend
+      - run: pnpm test:consumer -- --fixture nodemailer

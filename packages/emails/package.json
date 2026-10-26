@@ -15,6 +15,10 @@
       "workspace-source": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./nodemailer": {
+      "workspace-source": "./src/nodemailer.ts",
+      "default": "./dist/nodemailer.js"
+    },
     "./resend": {
       "workspace-source": "./src/resend.ts",
       "default": "./dist/resend.js"
@@ -28,6 +32,7 @@
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
+      "./nodemailer": "./dist/nodemailer.js",
       "./resend": "./dist/resend.js",
       "./testing": "./dist/testing.js",
       "./package.json": "./package.json"
@@ -52,17 +57,24 @@
     "@effect/vitest": "catalog:",
     "effect": "catalog:",
     "klarity": "catalog:",
+    "mailparser": "3.12.4",
+    "nodemailer": "10.2.1",
     "resend": "6.34.1",
+    "smtp-server": "3.21.1",
     "tsdown": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "peerDependencies": {
     "effect": "^4.0.6",
+    "nodemailer": "10.2.1",
     "resend": "6.34.1"
   },
   "peerDependenciesMeta": {
     "resend": {
+      "optional": true
+    },
+    "nodemailer": {
       "optional": true
     }
   }
