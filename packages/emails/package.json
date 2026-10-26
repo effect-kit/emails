@@ -37,6 +37,7 @@
     "check:package": "publint && attw --pack --profile esm-only"
   },
   "devDependencies": {
+    "@effect/vitest": "4.0.6",
     "effect": "catalog:",
     "klarity": "catalog:",
     "tsdown": "catalog:",

@@ -1,7 +1,5 @@
-# Changesets
+# Release versioning
 
-Run `pnpm changeset` for a user-visible package change. Commit the generated release note alongside
-that change. Tooling-only changes do not need a changeset.
-
-Run `pnpm version-packages` to apply pending versions locally. Publishing is a maintainer action;
-this scaffold does not configure automated npm publication.
+Changesets tooling is scaffolded for the final release phase. Do not add per-feature Changesets or
+bump versions during implementation. Prepare the consolidated release notes/version change at the
+final phase; the first public release targets 0.1.0.

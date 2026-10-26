@@ -1,7 +1,7 @@
 # @effect-kit/emails
 
-An Effect v4 native email package in its initial design stage. The workspace is ready for development;
-email sending and provider integrations are not implemented yet.
+An Effect v4 native email package under development. Core message, capability, receipt and error
+contracts are implemented; the sending service and built-in providers are the next implementation work.
 
 ## Development
 
@@ -15,14 +15,14 @@ pnpm check:package
 ```
 
 - `pnpm check`: formatting, linting, source/config and test type checking, and builds.
-- `pnpm test`: Vitest through Turbo. No runtime tests exist in the scaffold; it reports no tests.
+- `pnpm test`: Vitest contract and public-type tests through Turbo.
 - `pnpm check:package`: build, Publint, and Are the Types Wrong against a packed package.
 - `pnpm dev`: watch the package build.
 - `pnpm format` / `pnpm lint:fix`: apply formatting and lint fixes.
 - `pnpm clean`: remove package build and test output.
 - `pnpm changeset`: record a user-visible package change for versioning.
 
-`packages/emails` owns the future npm package. Shared tooling lives at the workspace root and uses
+`packages/emails` owns the npm package. Shared tooling lives at the workspace root and uses
 Klarity presets, TypeScript 7, tsdown, Oxfmt/Oxlint, Turbo, Lefthook, and Commitlint. Effect is installed
 at the root for local documentation and as a required peer of the package. Provider SDKs will be
 optional peers owned by individual subpath adapters.

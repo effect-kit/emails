@@ -3,18 +3,27 @@
 ## Scope and layout
 
 This is the pnpm/Turborepo workspace for `@effect-kit/emails`, an Effect v4 native library.
-`packages/emails` is the only publishable package. Its entry point is intentionally empty while the
-API is researched; do not describe planned providers or sending behavior as implemented.
+`packages/emails` is the only publishable package. Core message, capability, receipt and error schemas are implemented. Do not describe planned
+provider adapters or sending behavior as implemented.
 
-- `packages/emails/src`: public contracts and future provider adapters.
-- `packages/emails/test`: future unit, adapter contract, and public API tests.
+- `packages/emails/src`: domain folders such as message/, delivery/, errors/ and service/.
+  Future SDK adapters belong under providers/<provider>/. The root index is a deliberate public API.
+- `packages/emails/test/unit/<domain>`: schema, mapping and focused service behavior tests.
+- `packages/emails/test/integration/<domain>`: composed Effect services/Layers and SDK-boundary tests.
+- `packages/emails/test/fixtures`: reusable inert inputs and focused external substitutes.
+- `packages/emails/test/e2e`: built-package/consumer checks when those checks exist. Keep registry/live
+  lanes explicitly named and separate from normal offline tests; never send email in default tests.
 - Root configs: shared Klarity/OXC/TypeScript/Turbo tooling.
 - `/research/`: local, ignored investigations. Never commit these files or require them for builds.
 
 Inspect relevant source, package manifests, exports, tests, configuration, and callers before editing.
 Make the smallest coherent change. Preserve public behavior, naming, and dependency direction.
 Avoid unrelated refactors, speculative abstractions, catch-all modules, and unnecessary dependencies.
-Keep files focused; roughly 300–500 lines is a review prompt rather than a hard limit.
+Keep files focused; roughly 300–500 lines is a review prompt rather than a hard limit. Group source
+and tests by responsibility using folders/subfolders; split mixed-domain test files. Only create
+folders when they contain real work. Keep fixtures out of production code and avoid repeated setup.
+Use tsdown as the sole JavaScript/declaration emitter, with explicit entries for implemented public
+subpaths. TypeScript checks types and must not become a competing build pipeline.
 
 ## Git workflow
 
@@ -63,9 +72,7 @@ pnpm build
 pnpm check:package
 ```
 
-`pnpm check` combines formatting, lint, source/config/test type checks, and builds. Vitest currently
-allows no tests because there is no runtime implementation. Remove that exception with the first
-behavior tests. Use the installed `@effect/vitest` for Effect behavior and ordinary Vitest for pure
+`pnpm check` combines formatting, lint, source/config/test type checks, and builds. Vitest requires real tests; do not add a no-tests exception. Use the installed `@effect/vitest` for Effect behavior and ordinary Vitest for pure
 logic. Add regression, failure-path, resource lifecycle, and adapter contract tests when behavior lands.
 Do not write tests that merely repeat the implementation or TypeScript checks. Never send live emails
 in default tests or CI. Credentialed smoke tests must be explicit and use controlled recipients.
@@ -79,5 +86,6 @@ final diff for dead code, unnecessary comments, spacing, public exports, and acc
 Update owning READMEs when behavior, commands, exports, or configuration change. Keep docs concise
 and distinguish proposed contracts from implemented behavior. Keep provisional investigations in
 ignored `/research/`; promote durable decisions to maintained docs when implemented.
-For user-visible package changes, add a Changeset. Tooling-only changes need no release note.
+Do not add per-feature Changesets or bump versions during implementation. Prepare release notes
+and versioning only in the final release phase, targeting the first release at 0.1.0.
 Do not publish or configure external credentials without a maintainer's instruction.
