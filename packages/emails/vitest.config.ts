@@ -13,6 +13,7 @@ export default defineConfig({
   },
   ssr: { resolve: { conditions: ["workspace-source"] } },
   test: {
+    setupFiles: ["./test/fixtures/network/offline.ts"],
     include: ["test/unit/**/*.test.ts", "test/integration/**/*.test.ts"],
     server: { deps: { inline: ["@effect-kit/emails"] } },
   },

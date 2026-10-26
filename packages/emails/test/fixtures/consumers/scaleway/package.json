@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@scaleway/sdk-client": "2.16.0",
+    "@scaleway/sdk-tem": "2.16.3"
+  }
+}

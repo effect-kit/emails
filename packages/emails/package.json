@@ -20,6 +20,10 @@
       "workspace-source": "./src/azure.ts",
       "default": "./dist/azure.js"
     },
+    "./brevo": {
+      "workspace-source": "./src/brevo.ts",
+      "default": "./dist/brevo.js"
+    },
     "./mailersend": {
       "workspace-source": "./src/mailersend.ts",
       "default": "./dist/mailersend.js"
@@ -27,6 +31,10 @@
     "./mailgun": {
       "workspace-source": "./src/mailgun.ts",
       "default": "./dist/mailgun.js"
+    },
+    "./mailtrap": {
+      "workspace-source": "./src/mailtrap.ts",
+      "default": "./dist/mailtrap.js"
     },
     "./nodemailer": {
       "workspace-source": "./src/nodemailer.ts",
@@ -39,6 +47,10 @@
     "./resend": {
       "workspace-source": "./src/resend.ts",
       "default": "./dist/resend.js"
+    },
+    "./scaleway": {
+      "workspace-source": "./src/scaleway.ts",
+      "default": "./dist/scaleway.js"
     },
     "./sendgrid": {
       "workspace-source": "./src/sendgrid.ts",
@@ -58,11 +70,14 @@
     "exports": {
       ".": "./dist/index.js",
       "./azure": "./dist/azure.js",
+      "./brevo": "./dist/brevo.js",
       "./mailersend": "./dist/mailersend.js",
       "./mailgun": "./dist/mailgun.js",
+      "./mailtrap": "./dist/mailtrap.js",
       "./nodemailer": "./dist/nodemailer.js",
       "./postmark": "./dist/postmark.js",
       "./resend": "./dist/resend.js",
+      "./scaleway": "./dist/scaleway.js",
       "./sendgrid": "./dist/sendgrid.js",
       "./ses": "./dist/ses.js",
       "./testing": "./dist/testing.js",
@@ -115,11 +130,15 @@
   "peerDependencies": {
     "@aws-sdk/client-sesv2": "3.1157.0",
     "@azure/communication-email": "1.1.0",
+    "@getbrevo/brevo": "6.2.0",
+    "@scaleway/sdk-client": "2.16.0",
+    "@scaleway/sdk-tem": "2.16.3",
     "@sendgrid/mail": "8.1.6",
     "effect": "^4.0.6",
     "form-data": "4.0.5",
     "mailersend": "3.6.0",
     "mailgun.js": "14.1.0",
+    "mailtrap": "5.0.0",
     "nodemailer": "10.2.1",
     "postmark": "5.1.0",
     "resend": "6.34.1"
@@ -150,6 +169,18 @@
       "optional": true
     },
     "mailersend": {
+      "optional": true
+    },
+    "@getbrevo/brevo": {
+      "optional": true
+    },
+    "mailtrap": {
+      "optional": true
+    },
+    "@scaleway/sdk-tem": {
+      "optional": true
+    },
+    "@scaleway/sdk-client": {
       "optional": true
     }
   }
