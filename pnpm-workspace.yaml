@@ -30,3 +30,4 @@ minimumReleaseAgeExclude:
   - "@aws-sdk/token-providers@3.1157.0"
   - "@smithy/core@3.37.0"
   - "@smithy/node-http-handler@4.13.0"
+  - mailersend@3.6.0

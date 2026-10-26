@@ -2,6 +2,7 @@ import defineConfig from "klarity/tsdown/library";
 
 export default defineConfig({
   entry: {
+    postmark: "src/postmark.ts",
     index: "src/index.ts",
     azure: "src/azure.ts",
     ses: "src/ses.ts",
