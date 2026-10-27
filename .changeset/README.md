@@ -17,7 +17,7 @@ npm publish ./packages/emails/test/results/release/packages/effect-kit-emails-0.
 ```
 
 Publish the verified archive without rebuilding it. Local bootstrap uses your npm account/2FA;
-do not request provenance locally. The workflow refuses to publish `0.0.0`.
+do not request provenance locally.
 
 ## Trusted publishing setup
 
@@ -40,13 +40,19 @@ See [npm trusted publishing](https://docs.npmjs.com/trusted-publishers/).
 
 1. Run `pnpm changeset` for a meaningful package change and commit its release note with the change.
 2. Dispatch **Release** on `main` to open/update the version PR. Merge it after review.
-3. Dispatch **Release** again to validate, pack, verify and publish the new version.
+3. Dispatch **Release** again to check, pack, verify and publish the new version.
 
-The version command also refreshes the lockfile and formats generated files. The prepare job runs
-all checks and tests all isolated consumers against the downloaded Changesets archive. Publish
-uses that same artifact ID. A separate read-only job downloads the registry package, compares its
-bytes/integrity with the candidate, checks provenance metadata and runs the consumers again.
-Verification reports are uploaded as workflow artifacts. Normal CI never sends email or publishes.
+The version command also refreshes the lockfile and formats generated files. Release runs `pnpm check`
+and verifies the exact Changesets archive, including all isolated consumers, once before publishing.
+Publish uses that same artifact ID; verification reports are uploaded as workflow artifacts.
+CI runs the full artifact suite through `pnpm verify`. Normal CI never sends email or publishes.
+
+Publication does not wait for registry availability or run post-publish smoke tests. After npm makes
+the version available, download the unchanged Changesets packed artifact and check it separately:
+
+```sh
+pnpm release:smoke --pack-dir /absolute/path/to/packed-artifact --provenance
+```
 
 `pnpm release:check --pack-dir <directory>` verifies a local packed plan; paths are relative to the
 workspace root (absolute paths also work). `pnpm release:smoke --pack-dir <directory> --provenance`
