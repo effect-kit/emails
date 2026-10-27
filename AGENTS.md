@@ -1,125 +1,62 @@
 # Contributor instructions
 
-## Scope and layout
+This pnpm/Turborepo workspace publishes `@effect-kit/emails`, an ESM library for Effect v4.
+`packages/emails` is the only publishable package. Read its README and relevant source/tests first.
 
-This is the pnpm/Turborepo workspace for `@effect-kit/emails`, an Effect v4 native library.
-`packages/emails` is the only publishable package. Core contracts, Email.make and custom-provider Layer composition are implemented. Built-in SDK
-adapters cover all 16 providers listed in packages/emails/docs/providers/README.md; optional React rendering
-and Email.sendMany portable batches are implemented. Provider implementations
-live under providers/<provider>/ with explicit public subpath entries.
-The public testing Layer lives under src/testing/,
-with an explicit src/testing.ts subpath entry; core never re-exports it.
-React rendering lives under src/rendering/react/ and the optional src/react.ts subpath. React types
-and renderer peers stay confined there; TSX examples/tests use react-jsx and tsdown owns TSX emit.
-Maintained reliability/telemetry policy lives in packages/emails/docs/reliability.md; the provider
-capability, ownership and transport evidence matrix is docs/providers/evidence.md in that package.
+## Workflow
 
-- `packages/emails/src`: domain folders such as message/, delivery/, errors/ and service/.
-  SDK adapters belong under providers/<provider>/. The root index is a deliberate public API.
-- `packages/emails/test/unit/<domain>`: schema, mapping and focused service behavior tests.
-- `packages/emails/test/integration/<domain>`: composed Effect services/Layers and SDK-boundary tests.
-- `packages/emails/test/fixtures`: reusable inert inputs and focused external substitutes.
-  Reusable adapter contract cases live under fixtures/conformance/; migrate existing checks instead
-  of duplicating them when extending the harness.
-- `packages/emails/test/e2e`: built-package public import/behavior checks via pnpm test:e2e. Keep registry/live
-  lanes explicitly named and separate from normal offline tests; never send email in default tests.
-- `test/fixtures/consumers/<name>`: isolated package-consumer programs and selected peer manifests;
-  checked by pnpm test:consumer, excluded from workspace type checks. The Node runner and temporary
-  workspace lifecycle live under test/e2e/consumer and test/fixtures/consumers respectively.
-- Root configs: shared Klarity/OXC/TypeScript/Turbo tooling.
-- `/research/`: local, ignored investigations. Never commit these files or require them for builds.
+- Inspect the branch and working tree before editing. Preserve and separately commit pre-existing work.
+- Make focused changes and commit each coherent change using Conventional Commits. Avoid unrelated refactors.
+- Use Node 24.22.0+ and pnpm 12.14.0. Install with pnpm; commit dependency/lockfile changes together.
+- `/research/` is local and ignored. Never force-add it or require it for builds, tests or CI.
+- Keep modules focused, generally below 300–500 lines. Group source/tests by responsibility and avoid
+  catch-all utilities, unnecessary dependencies and speculative abstractions.
 
-Inspect relevant source, package manifests, exports, tests, configuration, and callers before editing.
-Make the smallest coherent change. Preserve public behavior, naming, and dependency direction.
-Avoid unrelated refactors, speculative abstractions, catch-all modules, and unnecessary dependencies.
-Keep files focused; roughly 300–500 lines is a review prompt rather than a hard limit. Group source
-and tests by responsibility using folders/subfolders; split mixed-domain test files. Only create
-folders when they contain real work. Keep fixtures out of production code and avoid repeated setup.
-Use tsdown as the sole JavaScript/declaration emitter, with explicit entries for implemented public
-subpaths. TypeScript checks types and must not become a competing build pipeline.
+## Layout and tooling
 
-## Git workflow
+- `src/`: message, delivery, errors, service, rendering, testing and providers/<provider> domains.
+- Public subpaths have explicit entries. Core never re-exports providers, React or the testing Layer.
+- `test/unit/`, `test/integration/`, `test/e2e/`: focused behavior suites. Reusable inert inputs and
+  adapter contracts belong in `test/fixtures/`. Consumer fixtures use public package imports.
+- Test configs and their tsdown runner build live under `test/`; production build config stays at
+  package root. Keep docs websites and example collections outside this package.
+- Use `#/` aliases with `.js` specifiers for internal imports: `#/*` maps to src and `#/test/*` to test.
+  Keep TypeScript/Vitest resolution aligned; emitted JS/declarations must contain no unresolved aliases.
+- tsdown is the only emitter; TypeScript only checks types. Keep Klarity/OXC presets, without
+  ESLint, Prettier or EditorConfig. The TypeScript 7.1 beta build pin supplies tsdown's required
+  `typescript/async` API; verify declaration emission before changing it.
 
-Inspect the working tree and branch before starting. Preserve pre-existing changes and commit them
-separately before implementation unless instructed not to commit. Never mix unrelated work.
-Create a commit after each meaningful, self-contained change. Use Conventional Commits, for example
-`feat(resend): add the sending layer`. Do not force-add ignored research or generated output.
+## Effect boundaries
 
-## Effect and package boundaries
+- Read installed `node_modules/effect/AGENTS.md` fully before writing Effect code. Use its ai-docs
+  and source for the locked version, not Effect v3 or old beta examples.
+- Use class-based Context.Service, Service.of and Layers. Capture infrastructure during acquisition;
+  scope owned resources and never destroy borrowed clients. Runtime execution belongs at consumer edges.
+- Prefer Effect.gen for workflows, Effect.fn for useful spans and Effect.fnUntraced for small library
+  operations. Use Schema at untrusted boundaries and Schema.TaggedError for expected failures.
+- Preserve defects and interruption. Validate before submission, preserve recipient visibility and
+  byte ownership, and reject features the selected provider cannot honor.
+- Never retry/fail over blindly: timeout/interruption can follow acceptance. A receipt is not delivery.
+- Use Config/Redacted for credentials. Do not log payloads, recipients, keys, raw SDK causes/configs
+  or template props. Built-in diagnostic codes must be explicitly recognized; syntax filtering is
+  insufficient. Keep tracing safe and distinguish native cancellation from local Effect deadlines.
+- SDKs and React stay optional peers behind selected subpaths. Core/testing require only Effect.
 
-Read `node_modules/effect/AGENTS.md` in full before writing Effect code. Follow relevant installed
-`ai-docs` references and source; verify APIs against the lockfile. Do not copy v3 or old beta APIs.
+## Verification
 
-- Use class-based `Context.Service`, `Service.of`, and Layers for public capabilities.
-- Use `Effect.gen` for inline workflows; `Effect.fn` for useful tracing boundaries and
-  `Effect.fnUntraced` for library operations that do not need a span.
-- Use `Schema` at untrusted boundaries and `Schema.TaggedError` for actionable expected failures.
-  Preserve defects and interruption. Never silently swallow errors or blindly cast SDK errors.
-- Capture infrastructure dependencies during Layer construction. Scope owned clients and resources;
-  never destroy caller-owned clients. Keep `runPromise` and other runtime execution at consumer edges.
-- Keep core exports independent of provider SDKs, React, Node-only transports, and application policy.
-  Provider SDKs belong in optional peer dependencies and explicit adapter subpaths. Do not eagerly
-  re-export all providers from the root. The package must work when unused provider peers are absent.
-- Never retry email submission blindly. A timeout or interruption after submission can mean an
-  uncertain acceptance outcome. Provider acceptance does not prove inbox delivery.
-- Do not log secrets, recipients, subjects, content, raw SDK requests, or unsanitized errors.
-  Use Config/Redacted for credentials. Never hard-code credentials or environment identifiers.
-- Keep built-in diagnostic codes explicitly recognized; syntax filtering alone can echo private text.
-  Keep expected errors safe, preserve defects/interruption, and document native cancellation limits.
-  Update the provider evidence matrix with capability, retry or ownership changes. Reuse conformance
-  fixtures to cover all 16 adapters; test telemetry under test/integration/observability/ and privacy
-  under test/integration/privacy/. Don't duplicate existing cases to increase a test count.
+Run `pnpm check` for formatting, lint, source/test types, offline tests and build. Run
+`pnpm test:artifacts` for built E2E, packed-package validation and isolated selected-peer consumers.
+`pnpm verify` runs both. Fix failures caused by your change and report skipped checks accurately.
 
-## Toolchain and verification
+Keep meaningful regression, error, lifecycle, privacy and public-contract tests. Reuse conformance
+fixtures instead of duplicating happy paths. Put type-only assertions in compile-only *.types.ts files.
+Default tests deny external fetch/HTTP before SDK imports; use loopback or explicit in-memory transports.
+Never send live email in default tests/CI. Add providers to the shared contracts and consumer fixtures.
 
-Use Node >=24.22 and the exact pnpm version in `package.json`. Install with pnpm; commit the lockfile.
-Use the root catalog for shared versions. Prefer platform APIs or existing dependencies over new ones.
-Use Klarity presets with narrow local overrides. Do not add ESLint, Prettier, or EditorConfig.
-TypeScript checks types; tsdown owns emit. Source uses strict checks and `workspace-source` resolution.
-Use #/ aliases for every internal import/re-export: #/message/... resolves under src/, #/test/...
-under test/, and #/examples/... under examples/. Keep .js extensions for TypeScript module specifiers.
-Shared TypeScript paths and explicit Vitest aliases must agree. Examples/consumer fixtures import
-public @effect-kit/emails subpaths. tsdown rewrites aliases to relative emitted imports; do not ship
-unresolved #/ specifiers. The isolated consumer runner is also built by tsdown before Node execution.
-Review generated and packed exports.
+## Releases
 
-After meaningful changes run the applicable commands:
-
-```sh
-pnpm format
-pnpm lint
-pnpm typecheck
-pnpm typecheck:test
-pnpm test
-pnpm test:e2e
-pnpm build
-pnpm check:package
-pnpm test:consumer
-```
-
-`pnpm check` combines formatting, lint, source/config/test type checks, and builds. Vitest requires real tests; do not add a no-tests exception. Use the installed `@effect/vitest` for Effect behavior and ordinary Vitest for pure
-logic. Add regression, failure-path, resource lifecycle, and adapter contract tests when behavior lands.
-Do not write tests that merely repeat the implementation or TypeScript checks. Never send live emails
-in default tests or CI. Credentialed smoke tests must be explicit and use controlled recipients.
-Keep only tests with a concrete failure or regression they protect. Avoid duplicate happy paths,
-getter/literal assertions, checks of dependency primitives and assertions on already annotated types.
-Keep meaningful public type contracts in compile-only *.types.ts fixtures checked by typecheck:test;
-do not count them as runtime tests. Reuse coverage across suites instead of targeting a test count.
-
-Default tests guard fetch and Node HTTP requests against external hosts before SDK imports; keep real
-SDK tests on loopback transports or explicit in-memory pipelines. Add each new provider to shared
-conformance cases and its own isolated consumer directory; CI discovers directories via --fixture all.
-
-CI runs `pnpm check`, `pnpm test`, `pnpm test:e2e`, packed-artifact checks and `pnpm test:consumer` after a frozen install. The consumer lane
-can access the npm registry and needs tar; pre-push keeps the offline checks. Fix failures caused
-by your work; report skipped checks and pre-existing failures without unrelated changes. Inspect the
-final diff for dead code, unnecessary comments, spacing, public exports, and accidental secrets.
-
-## Documentation and releases
-
-Update owning READMEs when behavior, commands, exports, or configuration change. Keep docs concise
-and distinguish proposed contracts from implemented behavior. Keep provisional investigations in
-ignored `/research/`; promote durable decisions to maintained docs when implemented.
-Do not add per-feature Changesets or bump versions during implementation. Prepare release notes
-and versioning only in the final release phase, targeting the first release at 0.1.0.
-Do not publish or configure external credentials without a maintainer's instruction.
+Keep the package at 0.0.0 for the maintainer's manual bootstrap. Changesets and the manual Release
+workflow handle later versions; follow `.changeset/README.md`. Use current major action tags, not SHAs,
+and shared setup. Publish only verified archives; no npm tokens or publish permissions in ordinary CI.
+Do not publish, push tags, configure external credentials or change live services without authorization.
+Keep READMEs concise and synchronized with actual behavior and commands.

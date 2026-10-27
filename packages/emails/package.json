@@ -1,16 +1,43 @@
 {
   "name": "@effect-kit/emails",
   "version": "0.0.0",
-  "description": "Effect v4 native email services and interchangeable provider layers.",
+  "description": "Typed email sending for Effect v4 with interchangeable provider Layers.",
+  "keywords": [
+    "aws-ses",
+    "effect",
+    "effect-v4",
+    "email",
+    "nodemailer",
+    "react-email",
+    "resend",
+    "transactional-email",
+    "typescript"
+  ],
+  "homepage": "https://github.com/effect-kit/emails/tree/main/packages/emails#readme",
+  "bugs": {
+    "url": "https://github.com/effect-kit/emails/issues"
+  },
   "license": "Apache-2.0",
+  "author": {
+    "name": "Effect Kit Contributors",
+    "url": "https://github.com/effect-kit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/effect-kit/emails.git",
+    "directory": "packages/emails"
+  },
   "files": [
     "dist",
     "README.md",
-    "LICENSE",
-    "docs"
+    "CHANGELOG.md",
+    "LICENSE"
   ],
   "type": "module",
   "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "workspace-source": "./src/index.ts",
@@ -113,21 +140,22 @@
       "./zeptomail": "./dist/zeptomail.js",
       "./package.json": "./package.json"
     },
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "build": "tsdown",
     "dev": "tsdown --watch",
     "clean": "node --input-type=module -e \"import { rmSync } from 'node:fs'; for (const path of ['dist', '.test-dist', 'coverage']) rmSync(path, { recursive: true, force: true })\"",
-    "lint": "oxlint --deny-warnings src",
+    "lint": "oxlint --deny-warnings src test *.config.ts",
     "typecheck": "tsc --project tsconfig.json --noEmit",
-    "typecheck:test": "tsc --project tsconfig.test.json --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "typecheck:test": "tsc --project test/tsconfig.json --noEmit",
+    "test": "vitest run --config test/vitest.config.ts",
+    "test:watch": "vitest --config test/vitest.config.ts",
     "prepack": "pnpm build",
     "check:package": "publint && attw --pack --profile esm-only",
-    "test:e2e": "vitest run --config vitest.e2e.config.ts",
-    "test:consumer": "tsdown --config tsdown.consumer.config.ts && node .test-dist/consumer.js"
+    "test:e2e": "vitest run --config test/vitest.e2e.config.ts",
+    "test:consumer": "tsdown --config test/tsdown.config.ts && node .test-dist/consumer.js"
   },
   "devDependencies": {
     "@aws-sdk/client-sesv2": "3.1157.0",
@@ -253,5 +281,8 @@
     "@types/react": {
       "optional": true
     }
+  },
+  "engines": {
+    "node": ">=24.22.0"
   }
 }

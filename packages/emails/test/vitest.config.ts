@@ -3,12 +3,13 @@ import { fileURLToPath } from "node:url";
 import defineConfig from "klarity/vitest/node";
 
 export default defineConfig({
+  root: fileURLToPath(new URL("../", import.meta.url)),
+  envDir: false,
   resolve: {
     conditions: ["workspace-source"],
     alias: {
-      "#/test": fileURLToPath(new URL("./test", import.meta.url)),
-      "#/examples": fileURLToPath(new URL("./examples", import.meta.url)),
-      "#": fileURLToPath(new URL("./src", import.meta.url)),
+      "#/test": fileURLToPath(new URL("./", import.meta.url)),
+      "#": fileURLToPath(new URL("../src", import.meta.url)),
     },
   },
   ssr: { resolve: { conditions: ["workspace-source"] } },

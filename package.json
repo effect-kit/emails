@@ -1,11 +1,24 @@
 {
   "name": "effect-kit-emails-workspace",
   "private": true,
+  "description": "Development workspace for @effect-kit/emails.",
+  "homepage": "https://github.com/effect-kit/emails#readme",
+  "bugs": {
+    "url": "https://github.com/effect-kit/emails/issues"
+  },
   "license": "Apache-2.0",
+  "author": {
+    "name": "Effect Kit Contributors",
+    "url": "https://github.com/effect-kit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/effect-kit/emails.git"
+  },
   "type": "module",
   "scripts": {
     "build": "turbo run build",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm typecheck:test && pnpm build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm build",
     "clean": "turbo run clean",
     "dev": "turbo run dev",
     "format": "oxfmt --write .",
@@ -20,7 +33,9 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "test:e2e": "turbo run test:e2e",
-    "test:consumer": "turbo run test:consumer"
+    "test:consumer": "turbo run test:consumer",
+    "test:artifacts": "pnpm test:e2e && pnpm check:package && pnpm test:consumer -- --fixture all",
+    "verify": "pnpm check && pnpm test:artifacts"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

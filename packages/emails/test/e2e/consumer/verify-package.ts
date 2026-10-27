@@ -67,7 +67,6 @@ const verifyFixture = async (fixture: string) => {
     for (const file of files) {
       assert(
         file.startsWith("package/dist/") ||
-          file.startsWith("package/docs/") ||
           ["package/package.json", "package/README.md", "package/LICENSE"].includes(file),
         `Unexpected archive file: ${file}`,
       );

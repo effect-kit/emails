@@ -22,7 +22,7 @@ export default defineConfig({
     resend: "src/resend.ts",
     nodemailer: "src/nodemailer.ts",
   },
-  exports: { devExports: "workspace-source" },
+  exports: { devExports: "workspace-source", legacy: true },
   unbundle: true,
   deps: { neverBundle: [/^node:/] },
   // TypeScript 7.1 changes the warning text handled by Klarity’s 7.0 preset.

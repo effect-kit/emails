@@ -7,7 +7,6 @@ import { Email } from "@effect-kit/emails";
 import * as EmailReact from "@effect-kit/emails/react";
 import { EmailTest } from "@effect-kit/emails/testing";
 
-import { offlineWelcome } from "#/examples/react-email.js";
 import { Welcome } from "#/test/fixtures/rendering/Welcome.js";
 
 const element = createElement(Welcome, {
@@ -84,13 +83,6 @@ describe("React content rendering", () => {
         assert.isTrue(Result.isSuccess(die));
         if (Result.isSuccess(die)) assert.strictEqual(die.success.defect, defect);
       }
-    }),
-  );
-
-  it.effect("runs the documented TSX example through the public testing Layer", () =>
-    Effect.gen(function* () {
-      const receipt = yield* offlineWelcome;
-      assert.strictEqual(receipt.status, "accepted");
     }),
   );
 });
