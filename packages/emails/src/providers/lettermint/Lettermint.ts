@@ -28,6 +28,7 @@ import { IdempotencyKey } from "#/providers/internal/Configuration.js";
 import { providerFailure, unexpectedResponse } from "#/providers/internal/Failures.js";
 import { formatMailbox } from "#/providers/internal/Mailboxes.js";
 import { accepted } from "#/providers/internal/Receipts.js";
+import { retryAfterSeconds } from "#/providers/internal/RetryHints.js";
 import {
   httpFailure,
   ProviderConfigurationError,
@@ -97,13 +98,7 @@ const failure = (provider: string, cause: unknown) => {
       ...(cause instanceof ConflictError ? { reason: new IdempotencyConflictError() } : {}),
       ...(cause instanceof RateLimitError
         ? {
-            reason: new RateLimitedError(
-              cause.retryAfter !== undefined &&
-                Number.isFinite(cause.retryAfter) &&
-                cause.retryAfter >= 0
-                ? { retryAfter: Duration.seconds(cause.retryAfter) }
-                : {},
-            ),
+            reason: new RateLimitedError(retryAfterSeconds(cause.retryAfter)),
           }
         : {}),
     });

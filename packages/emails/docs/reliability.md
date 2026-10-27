@@ -57,6 +57,8 @@ causes, requests/configs, provider prose, recipients and content. Invalid-messag
 field vocabulary and mask arbitrary record keys. Provider/rejection codes use explicit recognized
 values; a printable character/length check alone cannot prevent code-shaped tokens being echoed.
 Unknown codes are omitted while typed reasons and acceptance evidence remain intact.
+Retry hints are validated after conversion to finite, nonnegative Effect Durations. Missing, malformed
+or overflowing hints are omitted, preserving the expected provider failure instead of causing a defect.
 
 Custom adapters and `Email.of` are trusted extension boundaries. They own any metadata, exceptions,
 logging and native retry behavior they introduce. Direct Schema decoding can retain rejected input

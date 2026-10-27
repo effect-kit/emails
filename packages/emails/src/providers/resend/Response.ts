@@ -1,4 +1,4 @@
-import { Duration, Result, Schema } from "effect";
+import { Result, Schema } from "effect";
 
 import { ProviderCode, SubmissionReference } from "#/delivery/EmailReceipt.js";
 import type { SendReceipt } from "#/delivery/EmailReceipt.js";
@@ -17,6 +17,7 @@ import {
   UnexpectedResponseError,
 } from "#/errors/EmailError.js";
 import { diagnosticCode } from "#/providers/internal/DiagnosticCodes.js";
+import { retryAfterSeconds } from "#/providers/internal/RetryHints.js";
 
 const Envelope = Schema.Struct({
   data: Schema.Unknown,
@@ -88,9 +89,7 @@ export const fromResendResponse = (response: unknown): Result.Result<SendReceipt
   if (Result.isFailure(failure)) return Result.fail(unexpectedResponse());
   const { name, statusCode } = failure.success;
   const seconds = Schema.decodeUnknownResult(Seconds)(headers?.["retry-after"]);
-  const retryAfter = Result.isSuccess(seconds)
-    ? { retryAfter: Duration.seconds(seconds.success) }
-    : {};
+  const retryAfter = retryAfterSeconds(Result.isSuccess(seconds) ? seconds.success : undefined);
   let acceptance: EmailError["acceptance"] = "rejected";
   let reason: EmailError["reason"];
   if ((statusCode ?? 0) >= 500) {
