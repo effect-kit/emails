@@ -45,6 +45,10 @@ See [.changeset/README.md](.changeset/README.md) for release steps.
 CI, PR-title checks, Changeset summaries, release and smoke workflows reuse
 [EffectKit's shared automation](https://github.com/effect-kit/.github).
 
+PR titles follow Conventional Commits, for example `fix: preserve recipient visibility`.
+Changeset release impact appears in the Actions job summary; documentation-only PRs
+do not need a Changeset.
+
 ## License
 
 [Apache-2.0](LICENSE). Copyright 2026 Effect Kit Contributors.
