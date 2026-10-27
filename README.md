@@ -1,13 +1,16 @@
 # Effect Emails
 
-Typed email sending for **Effect v4**. One `Email` service, interchangeable provider Layers,
-typed failures, optional React rendering and bounded batch sending.
+Send transactional email with **Effect**. One typed API for 16 email providers, with composable
+Layers, typed errors, React templates and offline testing.
 
 ```sh
-pnpm add @effect-kit/emails effect resend@6.34.1
+pnpm add @effect-kit/emails effect resend
 ```
 
-See the [package README](packages/emails/README.md) for usage and supported providers.
+Use the same `Email` service with Resend, Amazon SES, Nodemailer and other providers. Install only
+the SDKs you use, and switch providers by supplying a different Layer.
+
+See the [package README](packages/emails/README.md) for setup, examples and supported providers.
 
 ## Development
 
@@ -19,17 +22,17 @@ pnpm check
 pnpm test:artifacts
 ```
 
-`check` runs formatting, lint, source/test type checks, offline tests and the tsdown build.
-`test:artifacts` checks built exports, package contents and isolated consumers with selected peers.
-`pnpm verify` runs both. Default tests never send live email.
+`pnpm check` runs formatting, lint, type checks, offline tests and the tsdown build.
+`pnpm test:artifacts` checks the built package and installs it in isolated projects with only the
+dependencies each provider needs. `pnpm verify` runs both. Tests do not send live email.
 
 The workspace uses TypeScript 7, Turborepo and Klarity/OXC tooling. Test configuration and fixtures
 live under `packages/emails/test/`. Contributor rules are in [AGENTS.md](AGENTS.md).
 
 ## Releases
 
-The package starts at `0.0.0` for manual npm bootstrap. Subsequent releases use a manually dispatched
-Changesets workflow with npm trusted publishing. See [.changeset/README.md](.changeset/README.md).
+Releases use Changesets and a manually dispatched GitHub Actions workflow with npm trusted publishing.
+See [.changeset/README.md](.changeset/README.md) for the initial manual publish and release steps.
 
 ## License
 

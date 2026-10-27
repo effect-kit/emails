@@ -1,11 +1,11 @@
 {
   "name": "@effect-kit/emails",
   "version": "0.0.0",
-  "description": "Typed email sending for Effect v4 with interchangeable provider Layers.",
+  "description": "Send email with Effect using a typed API, provider Layers, and optional React templates.",
   "keywords": [
     "aws-ses",
     "effect",
-    "effect-v4",
+    "effect-ts",
     "email",
     "nodemailer",
     "react-email",

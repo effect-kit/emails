@@ -1,6 +1,6 @@
 # Contributor instructions
 
-This pnpm/Turborepo workspace publishes `@effect-kit/emails`, an ESM library for Effect v4.
+This pnpm/Turborepo workspace publishes `@effect-kit/emails`, an ESM library for Effect.
 `packages/emails` is the only publishable package. Read its README and relevant source/tests first.
 
 ## Workflow
