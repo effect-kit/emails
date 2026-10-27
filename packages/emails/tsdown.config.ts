@@ -24,6 +24,8 @@ export default defineConfig({
   },
   exports: { devExports: "workspace-source", legacy: true },
   unbundle: true,
+  // Declaration maps point to unpublished src files; JavaScript maps embed their sources.
+  dts: { sourcemap: false },
   deps: { neverBundle: [/^node:/] },
   // TypeScript 7.1 changes the warning text handled by Klarity’s 7.0 preset.
   suppressWarnings: [/^TypeScript Go is experimental\. Some options will be unavailable\.$/],
