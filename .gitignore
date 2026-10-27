@@ -12,6 +12,7 @@ dist/
 coverage/
 .vitest/
 test-results/
+packages/emails/test/results/
 playwright-report/
 
 # Local research must never be committed

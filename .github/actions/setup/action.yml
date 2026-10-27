@@ -1,0 +1,27 @@
+name: Workspace setup
+description: Install pinned runtimes and workspace dependencies after checkout
+
+inputs:
+  node-version:
+    description: Override the runtime pinned in .node-version
+    default: ""
+  cache:
+    description: Package-manager cache to enable (pnpm or empty)
+    default: ""
+  ignore-scripts:
+    description: Disable dependency lifecycle scripts
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v6
+    - uses: actions/setup-node@v7
+      with:
+        node-version: ${{ inputs.node-version }}
+        node-version-file: .node-version
+        cache: ${{ inputs.cache }}
+        package-manager-cache: false
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile${{ inputs.ignore-scripts == 'true' && ' --ignore-scripts' || '' }}

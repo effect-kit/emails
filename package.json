@@ -31,11 +31,14 @@
     "typecheck:test": "turbo run typecheck:test",
     "check:package": "turbo run check:package",
     "changeset": "changeset",
-    "version-packages": "changeset version",
+    "version-packages": "changeset version && pnpm install --lockfile-only --ignore-scripts && pnpm format",
     "test:e2e": "turbo run test:e2e",
     "test:consumer": "turbo run test:consumer",
     "test:artifacts": "pnpm test:e2e && pnpm check:package && pnpm test:consumer -- --fixture all",
-    "verify": "pnpm check && pnpm test:artifacts"
+    "verify": "pnpm check && pnpm test:artifacts",
+    "release:pack": "changeset pack --out-dir packages/emails/test/results/release",
+    "release:check": "pnpm --filter @effect-kit/emails test:release",
+    "release:smoke": "pnpm --filter @effect-kit/emails test:release:registry"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

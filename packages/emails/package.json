@@ -155,7 +155,9 @@
     "prepack": "pnpm build",
     "check:package": "publint && attw --pack --profile esm-only",
     "test:e2e": "vitest run --config test/vitest.e2e.config.ts",
-    "test:consumer": "tsdown --config test/tsdown.config.ts && node .test-dist/consumer.js"
+    "test:consumer": "tsdown --config test/tsdown.config.ts && node .test-dist/consumer.js",
+    "test:release": "tsdown --config test/tsdown.config.ts && node .test-dist/release.js",
+    "test:release:registry": "tsdown --config test/tsdown.config.ts && node .test-dist/registry.js"
   },
   "devDependencies": {
     "@aws-sdk/client-sesv2": "3.1157.0",

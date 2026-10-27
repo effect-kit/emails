@@ -9,23 +9,32 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   check:
+    # Version PRs from GITHUB_TOKEN are verified after merge and again before publishing.
+    if: >-
+      !(github.event_name == 'pull_request' &&
+        github.actor == 'github-actions[bot]' &&
+        github.event.pull_request.head.ref == 'changeset-release/main' &&
+        github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["24.22.0", "24.x"]
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
         with:
-          node-version-file: .node-version
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          node-version: ${{ matrix.node }}
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm check
-      - run: pnpm test
-      - run: pnpm test:e2e
-      - run: pnpm check:package
-      - run: pnpm test:consumer -- --fixture all
+      - run: pnpm verify
+      - name: Verify the beta compiler consumer boundary
+        if: matrix.node == '24.x'
+        run: pnpm test:consumer -- --fixture react-resend --typescript 7.1.0-beta

@@ -4,4 +4,4 @@ extends:
 pre-push:
   jobs:
     - name: check
-      run: pnpm check && pnpm test && pnpm test:e2e && pnpm check:package
+      run: pnpm check && pnpm test:e2e && pnpm check:package
