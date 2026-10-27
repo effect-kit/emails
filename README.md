@@ -3,7 +3,7 @@
 An Effect v4 native email package under development. Core contracts, the Email service and
 custom-provider Layers and all 16 planned provider integrations are implemented.
 See the [provider support table](packages/emails/docs/providers/README.md) for SDKs and capability limits.
-Rendering and portable batching are next.
+Optional [React rendering](packages/emails/docs/rendering.md) is implemented; portable batching is next.
 
 ## Development
 
@@ -44,9 +44,9 @@ configured.
 Consumer fixtures live under `packages/emails/test/fixtures/consumers/<name>/`. Their package.json lists
 only the selected SDK and any required companion peers; the runner supplies Effect and the package
 tarball with peer auto-installation disabled. `core` has no SDK dependencies; every provider fixture selects only its own SDK/companion peers.
-CI runs all 17 isolated fixtures with `pnpm test:consumer -- --fixture all`.
+CI runs all 18 isolated fixtures with `pnpm test:consumer -- --fixture all`.
 To select a fixture, run `pnpm test:consumer -- --fixture core`. Each fixture owns a consumer.ts using
-public imports. Fixtures compile in the isolated lane rather than workspace type checks, so workspace
+public imports. TSX consumers are emitted through tsdown before Node execution. Fixtures compile in the isolated lane rather than workspace type checks, so workspace
 dependencies cannot conceal missing peers. Temporary installations are removed on success or failure;
 child processes have a two-minute timeout and diagnostics expose stage/code without registry details.
 

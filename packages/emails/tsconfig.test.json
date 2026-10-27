@@ -3,8 +3,16 @@
   "compilerOptions": {
     "customConditions": ["workspace-source"],
     "types": ["node"],
-    "lib": ["ES2024"]
+    "lib": ["ES2024"],
+    "jsx": "react-jsx"
   },
   "exclude": ["test/fixtures/consumers/*/**"],
-  "include": ["src/**/*.ts", "test/**/*.ts", "examples/**/*.ts", "*.config.ts"]
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "examples/**/*.ts",
+    "*.config.ts",
+    "test/**/*.tsx",
+    "examples/**/*.tsx"
+  ]
 }

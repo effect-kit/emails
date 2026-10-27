@@ -85,7 +85,10 @@ export const CustomHeaders = Schema.Record(
 );
 export type CustomHeaders = typeof CustomHeaders.Type;
 
-const Body = Schema.String.check(Schema.isPattern(/\S/), Schema.isPattern(/^[^\u0000]*$/));
+export const EmailBody = Schema.String.check(
+  Schema.isPattern(/\S/),
+  Schema.isPattern(/^[^\u0000]*$/),
+);
 const fields = {
   from: Address,
   to: Recipients,
@@ -98,8 +101,8 @@ const fields = {
 };
 
 export const EmailMessage = Schema.Union([
-  Schema.Struct({ ...fields, text: Body, html: Schema.optionalKey(Body) }),
-  Schema.Struct({ ...fields, html: Body, text: Schema.optionalKey(Body) }),
+  Schema.Struct({ ...fields, text: EmailBody, html: Schema.optionalKey(EmailBody) }),
+  Schema.Struct({ ...fields, html: EmailBody, text: Schema.optionalKey(EmailBody) }),
 ]).check(
   Schema.makeFilter((message) => {
     const ids =

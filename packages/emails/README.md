@@ -3,7 +3,7 @@
 Effect v4 native email services and contracts. Core sending works through custom provider Layers.
 The public testing Layer captures offline submissions. All 16 provider adapters are available through
 optional SDK subpaths; see the [support table](docs/providers/README.md) for installation, configuration,
-capabilities and native cancellation limits. React rendering and portable batching remain planned.
+capabilities and native cancellation limits. Optional [React rendering](docs/rendering.md) is available; portable batching remains planned.
 
 ```ts
 import { Schema } from "effect";

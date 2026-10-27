@@ -60,6 +60,10 @@
       "workspace-source": "./src/postmark.ts",
       "default": "./dist/postmark.js"
     },
+    "./react": {
+      "workspace-source": "./src/react.ts",
+      "default": "./dist/react.js"
+    },
     "./resend": {
       "workspace-source": "./src/resend.ts",
       "default": "./dist/resend.js"
@@ -100,6 +104,7 @@
       "./nodemailer": "./dist/nodemailer.js",
       "./plunk": "./dist/plunk.js",
       "./postmark": "./dist/postmark.js",
+      "./react": "./dist/react.js",
       "./resend": "./dist/resend.js",
       "./scaleway": "./dist/scaleway.js",
       "./sendgrid": "./dist/sendgrid.js",
@@ -132,9 +137,11 @@
     "@getbrevo/brevo": "6.2.0",
     "@mailchimp/mailchimp_transactional": "1.4.1",
     "@plunk/node": "3.0.3",
+    "@react-email/render": "2.1.1",
     "@scaleway/sdk-client": "2.16.0",
     "@scaleway/sdk-tem": "2.16.3",
     "@sendgrid/mail": "8.1.6",
+    "@types/react": "19.3.0",
     "effect": "catalog:",
     "form-data": "4.0.5",
     "klarity": "catalog:",
@@ -145,6 +152,8 @@
     "mailtrap": "5.0.0",
     "nodemailer": "10.2.1",
     "postmark": "5.1.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "resend": "6.34.1",
     "smtp-server": "3.21.1",
     "tsdown": "catalog:",
@@ -159,9 +168,11 @@
     "@getbrevo/brevo": "6.2.0",
     "@mailchimp/mailchimp_transactional": "1.4.1",
     "@plunk/node": "3.0.3",
+    "@react-email/render": "2.1.1",
     "@scaleway/sdk-client": "2.16.0",
     "@scaleway/sdk-tem": "2.16.3",
     "@sendgrid/mail": "8.1.6",
+    "@types/react": "19.3.0",
     "effect": "^4.0.6",
     "form-data": "4.0.5",
     "lettermint": "3.2.0",
@@ -170,6 +181,8 @@
     "mailtrap": "5.0.0",
     "nodemailer": "10.2.1",
     "postmark": "5.1.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "resend": "6.34.1",
     "zeptomail": "8.0.1"
   },
@@ -226,6 +239,18 @@
       "optional": true
     },
     "@mailchimp/mailchimp_transactional": {
+      "optional": true
+    },
+    "@react-email/render": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "@types/react": {
       "optional": true
     }
   }

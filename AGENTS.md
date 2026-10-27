@@ -4,10 +4,12 @@
 
 This is the pnpm/Turborepo workspace for `@effect-kit/emails`, an Effect v4 native library.
 `packages/emails` is the only publishable package. Core contracts, Email.make and custom-provider Layer composition are implemented. Built-in SDK
-adapters cover all 16 providers listed in packages/emails/docs/providers/README.md; rendering and batching remain planned. Provider implementations
+adapters cover all 16 providers listed in packages/emails/docs/providers/README.md; optional React rendering is implemented and batching remains planned. Provider implementations
 live under providers/<provider>/ with explicit public subpath entries.
 The public testing Layer lives under src/testing/,
 with an explicit src/testing.ts subpath entry; core never re-exports it.
+React rendering lives under src/rendering/react/ and the optional src/react.ts subpath. React types
+and renderer peers stay confined there; TSX examples/tests use react-jsx and tsdown owns TSX emit.
 
 - `packages/emails/src`: domain folders such as message/, delivery/, errors/ and service/.
   SDK adapters belong under providers/<provider>/. The root index is a deliberate public API.

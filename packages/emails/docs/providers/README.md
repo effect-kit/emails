@@ -44,6 +44,6 @@ send failures expose common tagged reasons without SDK causes, addresses, conten
 New providers can use Email.make and Layer composition without changing core.
 
 Verification is local: real SDKs with controlled HTTP/SMTP transports, shared conformance, packed
-runtime imports and strict NodeNext/Bundler declarations with only selected peers. All 17 consumer
+runtime imports and strict NodeNext/Bundler declarations with only selected peers. All 18 consumer
 fixtures run through `pnpm test:consumer -- --fixture all`. No live-provider acceptance, account setup,
 publication or guarantee about an untested SDK version is implied.

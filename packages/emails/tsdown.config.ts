@@ -2,6 +2,7 @@ import defineConfig from "klarity/tsdown/library";
 
 export default defineConfig({
   entry: {
+    react: "src/react.ts",
     postmark: "src/postmark.ts",
     sendgrid: "src/sendgrid.ts",
     mailgun: "src/mailgun.ts",

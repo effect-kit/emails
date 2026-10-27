@@ -123,7 +123,59 @@ const verifyFixture = async (fixture: string) => {
         "Ambient declaration packages must not mask leaked types",
       );
     }
-    await run("runtime public imports", process.execPath, ["consumer.ts"], consumer);
+    const hasTsx = (await readdir(consumer)).includes("consumer.tsx");
+    if (hasTsx) {
+      const config = join(consumer, "tsdown.config.mjs");
+      await writeFile(
+        join(consumer, "tsconfig.runtime.json"),
+        JSON.stringify({
+          compilerOptions: {
+            jsx: "react-jsx",
+            target: "ES2022",
+            module: "ESNext",
+            moduleResolution: "Bundler",
+          },
+        }),
+      );
+      await writeFile(
+        config,
+        `export default ${JSON.stringify({
+          root: consumer,
+          entry: { consumer: join(consumer, "consumer.tsx") },
+          tsconfig: join(consumer, "tsconfig.runtime.json"),
+          outDir: join(consumer, "compiled"),
+          platform: "node",
+          target: "node24",
+          format: "esm",
+          dts: false,
+          exports: false,
+          publint: false,
+          report: false,
+          outputOptions: { entryFileNames: "[name].js" },
+          deps: {
+            neverBundle: [
+              "effect",
+              "@effect-kit/emails",
+              "react",
+              "react/jsx-runtime",
+              ...Object.keys(fixtureDependencies),
+            ],
+          },
+        })};`,
+      );
+      await run(
+        "compile TSX consumer",
+        "pnpm",
+        ["exec", "tsdown", "--config", config],
+        packageRoot,
+      );
+    }
+    await run(
+      "runtime public imports",
+      process.execPath,
+      [hasTsx ? "compiled/consumer.js" : "consumer.ts"],
+      consumer,
+    );
 
     const declarations = await Promise.allSettled(
       ["NodeNext", "Bundler"].map(async (resolution) => {
@@ -133,6 +185,7 @@ const verifyFixture = async (fixture: string) => {
           JSON.stringify({
             compilerOptions: {
               strict: true,
+              jsx: "react-jsx",
               target: "ES2022",
               module: resolution === "NodeNext" ? "NodeNext" : "ESNext",
               moduleResolution: resolution,
@@ -141,7 +194,7 @@ const verifyFixture = async (fixture: string) => {
               skipLibCheck: false,
               noEmit: true,
             },
-            include: ["**/*.ts"],
+            include: ["**/*.ts", "**/*.tsx"],
           }),
         );
         await run(
