@@ -16,6 +16,7 @@ import {
   TransportError,
   UnexpectedResponseError,
 } from "#/errors/EmailError.js";
+import { diagnosticCode } from "#/providers/internal/DiagnosticCodes.js";
 
 const Envelope = Schema.Struct({
   data: Schema.Unknown,
@@ -142,13 +143,14 @@ export const fromResendResponse = (response: unknown): Result.Result<SendReceipt
     reason = new ProviderError();
     acceptance = "unknown";
   }
+  const code = diagnosticCode("resend", name);
   return Result.fail(
     new EmailError({
       provider: "resend",
       operation: "send",
       acceptance,
       reason,
-      providerCode: name,
+      ...(code === undefined ? {} : { providerCode: code }),
       ...(statusCode === null || statusCode === undefined ? {} : { statusCode }),
     }),
   );

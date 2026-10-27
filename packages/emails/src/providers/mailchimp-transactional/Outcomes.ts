@@ -1,7 +1,7 @@
 // oxlint-disable no-underscore-dangle -- The provider uses _id as its documented response field.
 import { Result, Schema } from "effect";
 
-import { ProviderCode, SubmissionReference } from "#/delivery/EmailReceipt.js";
+import { SubmissionReference } from "#/delivery/EmailReceipt.js";
 import type { RecipientOutcome, SendReceipt } from "#/delivery/EmailReceipt.js";
 import {
   AuthenticationError,
@@ -22,6 +22,7 @@ const Recipient = Schema.Struct({
   reject_reason: Schema.optionalKey(Schema.NullOr(Schema.String)),
 });
 const Failure = Schema.Struct({ status: Schema.Literal("error"), name: Schema.String });
+const RejectionCode = Schema.Literals(["hard_bounce"]);
 const AxiosFailure = Schema.Struct({
   isAxiosError: Schema.Literal(true),
   response: Schema.optionalKey(
@@ -90,7 +91,7 @@ export const outcome = (
     const id = Schema.decodeUnknownResult(SubmissionReference.fields.value)(recipient._id);
     if (status === "accepted" && Result.isFailure(id))
       return Result.fail(unexpectedResponse(provider, base.success.references));
-    const code = Schema.decodeUnknownResult(ProviderCode)(
+    const code = Schema.decodeUnknownResult(RejectionCode)(
       recipient.reject_reason?.replaceAll("-", "_"),
     );
     recipients.push({

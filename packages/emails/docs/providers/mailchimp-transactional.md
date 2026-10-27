@@ -16,7 +16,8 @@ batch operation or idempotency is exposed. Ordinary provider queuing may still r
 sent/queued/scheduled mean provider acceptance, never inbox delivery. Mixed accepted/rejected/invalid
 recipient results produce partial receipts with role/index positions. All-rejected fails; missing,
 foreign, duplicated or ambiguous associations remain uncertain while retaining known IDs. Rejection
-codes normalize hyphens to underscores and omit raw addresses. HTTP errors returned as fulfilled
+codes use an explicit allowlist (currently hard-bounce → hard_bounce); unfamiliar text is omitted
+without changing recipient outcomes. Raw addresses are omitted. HTTP errors returned as fulfilled
 AxiosError values are detected before normal result decoding. Credentials in SDK request bodies,
 original errors and server prose never cross the public error boundary.
 

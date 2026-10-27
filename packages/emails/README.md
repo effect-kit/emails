@@ -32,6 +32,8 @@ const message = Schema.decodeUnknownSync(EmailMessage)({
   provider IDs, SMTP Message-IDs and asynchronous operation IDs; no ID is fabricated when absent.
 - EmailError carries typed reasons and acceptance evidence: notSubmitted, rejected or unknown. Retry
   hints/retention use finite nonnegative Effect Duration values. Raw provider errors are not a field.
+  Built-in adapters expose only recognized diagnostic codes; unfamiliar code-shaped text is omitted
+  because it can echo credentials or content. Typed failure reasons and acceptance evidence remain.
 
 Schemas and their TypeScript types share exported names. Direct schema decoding returns Effect's
 ordinary SchemaError; callers must not log rejected input or schema errors containing sensitive data.

@@ -70,6 +70,6 @@ it("sanitizes unfamiliar or malformed structured SMTP failures", () => {
   );
   expect(failure.reason._tag).toBe("ProviderError");
   expect(failure.acceptance).toBe("unknown");
-  expect(failure.providerCode).toBe("FUTURE_SMTP_ERROR");
+  expect(failure.providerCode).toBeUndefined();
   expect(JSON.stringify(failure)).not.toContain("private-provider-details");
 });

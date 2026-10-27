@@ -57,7 +57,6 @@ export const fromNodemailerFailure = (
       provider: "nodemailer",
       operation: "send",
       acceptance: "unknown",
-      providerCode: unfamiliar.success.code,
       reason: new ProviderError(),
     });
   }

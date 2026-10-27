@@ -1,6 +1,5 @@
 import { Result, Schema } from "effect";
 
-import { ProviderCode } from "#/delivery/EmailReceipt.js";
 import type { SubmissionReference } from "#/delivery/EmailReceipt.js";
 import {
   AuthenticationError,
@@ -14,6 +13,7 @@ import {
   UnexpectedResponseError,
 } from "#/errors/EmailError.js";
 import type { EmailErrorReason } from "#/errors/EmailError.js";
+import { diagnosticCode } from "#/providers/internal/DiagnosticCodes.js";
 
 const Status = Schema.Int.check(Schema.isBetween({ minimum: 100, maximum: 599 }));
 export interface FailureDetails {
@@ -27,7 +27,7 @@ export interface FailureDetails {
 /** Only allowlisted metadata crosses the SDK boundary; rejected SDK objects never become causes. */
 export const providerFailure = (provider: string, details: FailureDetails = {}): EmailError => {
   const status = Schema.decodeUnknownResult(Status)(details.status);
-  const code = Schema.decodeUnknownResult(ProviderCode)(details.code);
+  const code = diagnosticCode(provider, details.code);
   const statusCode = Result.isSuccess(status) ? status.success : undefined;
   const reason =
     details.reason ??
@@ -52,7 +52,7 @@ export const providerFailure = (provider: string, details: FailureDetails = {}):
         ? "rejected"
         : "unknown"),
     ...(statusCode === undefined ? {} : { statusCode }),
-    ...(Result.isSuccess(code) ? { providerCode: code.success } : {}),
+    ...(code === undefined ? {} : { providerCode: code }),
     ...(details.references === undefined ? {} : { references: details.references }),
   });
 };
