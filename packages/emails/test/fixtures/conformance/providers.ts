@@ -9,14 +9,16 @@ import * as Mailchimp from "@effect-kit/emails/mailchimp-transactional";
 import * as MailerSend from "@effect-kit/emails/mailersend";
 import * as Mailgun from "@effect-kit/emails/mailgun";
 import * as Mailtrap from "@effect-kit/emails/mailtrap";
+import * as Nodemailer from "@effect-kit/emails/nodemailer";
 import * as Plunk from "@effect-kit/emails/plunk";
 import * as Postmark from "@effect-kit/emails/postmark";
+import * as Resend from "@effect-kit/emails/resend";
 import * as Scaleway from "@effect-kit/emails/scaleway";
 import * as SendGrid from "@effect-kit/emails/sendgrid";
 import * as Ses from "@effect-kit/emails/ses";
 import * as ZeptoMail from "@effect-kit/emails/zeptomail";
 
-type Request = (signal?: AbortSignal) => Promise<unknown>;
+type Request = (signal?: AbortSignal, payload?: unknown) => Promise<unknown>;
 interface ProviderCase {
   readonly name: string;
   readonly response: unknown;
@@ -26,11 +28,31 @@ interface ProviderCase {
 
 export const providerCases: ReadonlyArray<ProviderCase> = [
   {
+    name: "resend",
+    response: { data: { id: "id" }, error: null, headers: null },
+    signal: true,
+    layer: (request, timeout) =>
+      Resend.layerClient(
+        { emails: { send: (payload, options) => request(options?.signal, payload) } },
+        { timeout },
+      ),
+  },
+  {
+    name: "nodemailer",
+    response: { messageId: "smtp-id", accepted: ["ada@example.com"], rejected: [] },
+    signal: false,
+    layer: (request, timeout) =>
+      Nodemailer.layerClient({ sendMail: (payload) => request(undefined, payload) }, { timeout }),
+  },
+  {
     name: "ses",
     response: { MessageId: "id" },
     signal: true,
     layer: (request, timeout) =>
-      Ses.layerClient({ send: (_command, options) => request(options?.abortSignal) }, { timeout }),
+      Ses.layerClient(
+        { send: (command, options) => request(options?.abortSignal, command.input) },
+        { timeout },
+      ),
   },
   {
     name: "azure",
@@ -39,8 +61,8 @@ export const providerCases: ReadonlyArray<ProviderCase> = [
     layer: (request, timeout) =>
       Azure.layerClient(
         {
-          beginSend: async (_message, options) => {
-            const response = await request(options?.abortSignal);
+          beginSend: async (payload, options) => {
+            const response = await request(options?.abortSignal, payload);
             return {
               pollUntilDone: async () => response,
               getResult: () => response,
@@ -55,13 +77,15 @@ export const providerCases: ReadonlyArray<ProviderCase> = [
     name: "postmark",
     response: { MessageID: "id", ErrorCode: 0 },
     signal: false,
-    layer: (request, timeout) => Postmark.layerClient({ sendEmail: () => request() }, { timeout }),
+    layer: (request, timeout) =>
+      Postmark.layerClient({ sendEmail: (payload) => request(undefined, payload) }, { timeout }),
   },
   {
     name: "sendgrid",
     response: [{ statusCode: 202 }, {}],
     signal: false,
-    layer: (request, timeout) => SendGrid.layerClient({ send: () => request() }, { timeout }),
+    layer: (request, timeout) =>
+      SendGrid.layerClient({ send: (payload) => request(undefined, payload) }, { timeout }),
   },
   {
     name: "mailgun",
@@ -69,7 +93,7 @@ export const providerCases: ReadonlyArray<ProviderCase> = [
     signal: false,
     layer: (request, timeout) =>
       Mailgun.layerClient(
-        { messages: { create: () => request() } },
+        { messages: { create: (_domain, payload) => request(undefined, payload) } },
         { domain: "mail.example.com", timeout },
       ),
   },
@@ -78,7 +102,10 @@ export const providerCases: ReadonlyArray<ProviderCase> = [
     response: { statusCode: 202, headers: { "x-message-id": "id" }, body: "" },
     signal: false,
     layer: (request, timeout) =>
-      MailerSend.layerClient({ email: { send: () => request() } }, { timeout }),
+      MailerSend.layerClient(
+        { email: { send: (payload) => request(undefined, payload) } },
+        { timeout },
+      ),
   },
   {
     name: "brevo",
@@ -88,7 +115,7 @@ export const providerCases: ReadonlyArray<ProviderCase> = [
       Brevo.layerClient(
         {
           transactionalEmails: {
-            sendTransacEmail: (_message, options) => request(options?.abortSignal),
+            sendTransacEmail: (payload, options) => request(options?.abortSignal, payload),
           },
         },
         { timeout },
@@ -99,7 +126,10 @@ export const providerCases: ReadonlyArray<ProviderCase> = [
     response: { success: true, message_ids: ["id"] },
     signal: false,
     layer: (request, timeout) =>
-      Mailtrap.layerClient({ send: () => request() }, { mode: "production", timeout }),
+      Mailtrap.layerClient(
+        { send: (payload) => request(undefined, payload) },
+        { mode: "production", timeout },
+      ),
   },
   {
     name: "scaleway",
@@ -107,7 +137,7 @@ export const providerCases: ReadonlyArray<ProviderCase> = [
     signal: true,
     layer: (request, timeout) =>
       Scaleway.layerClient(
-        { createEmail: (_message, options) => request(options?.signal) },
+        { createEmail: (payload, options) => request(options?.signal, payload) },
         { projectId: "00000000-0000-4000-8000-000000000001", region: "fr-par", timeout },
       ),
   },
@@ -117,7 +147,7 @@ export const providerCases: ReadonlyArray<ProviderCase> = [
     signal: true,
     layer: (request, timeout) =>
       Lettermint.layerClient(
-        { emails: { send: (_message, options) => request(options?.signal) } },
+        { emails: { send: (payload, options) => request(options?.signal, payload) } },
         { timeout },
       ),
   },
@@ -126,26 +156,36 @@ export const providerCases: ReadonlyArray<ProviderCase> = [
     response: { data: { id: "id" }, error: null, headers: null },
     signal: false,
     layer: (request, timeout) =>
-      Eusend.layerClient({ emails: { send: () => request() } }, { timeout }),
+      Eusend.layerClient(
+        { emails: { send: (payload) => request(undefined, payload) } },
+        { timeout },
+      ),
   },
   {
     name: "zeptomail",
     response: { data: [{ code: "EM_104" }], request_id: "request" },
     signal: false,
-    layer: (request, timeout) => ZeptoMail.layerClient({ sendMail: () => request() }, { timeout }),
+    layer: (request, timeout) =>
+      ZeptoMail.layerClient({ sendMail: (payload) => request(undefined, payload) }, { timeout }),
   },
   {
     name: "plunk",
     response: { success: true, data: { emails: [{ status: "queued", email: "id" }] } },
     signal: false,
     layer: (request, timeout) =>
-      Plunk.layerClient({ emails: { send: () => request() } }, { timeout }),
+      Plunk.layerClient(
+        { emails: { send: (payload) => request(undefined, payload) } },
+        { timeout },
+      ),
   },
   {
     name: "mailchimp-transactional",
     response: [{ email: "ada@example.com", status: "queued", _id: "id" }],
     signal: false,
     layer: (request, timeout) =>
-      Mailchimp.layerClient({ messages: { send: () => request() } }, { timeout }),
+      Mailchimp.layerClient(
+        { messages: { send: (payload) => request(undefined, payload) } },
+        { timeout },
+      ),
   },
 ];

@@ -88,5 +88,35 @@ for (const provider of providerCases) {
         ),
       );
     });
+
+    it.effect(
+      "preserves caller interruption without another submission or fabricated EmailError",
+      () =>
+        Effect.gen(function* () {
+          const started = Promise.withResolvers<void>();
+          let attempts = 0;
+          let signal: AbortSignal | undefined;
+          yield* Effect.gen(function* () {
+            const email = yield* Email;
+            const fiber = yield* Effect.forkChild(email.send(portableMessage));
+            yield* Effect.promise(() => started.promise);
+            yield* Fiber.interrupt(fiber);
+            const exit = yield* Fiber.await(fiber);
+            assert.isTrue(Exit.isFailure(exit));
+            if (Exit.isFailure(exit)) assert.isTrue(Cause.hasInterruptsOnly(exit.cause));
+            assert.strictEqual(attempts, 1);
+            if (provider.signal) assert.isTrue(signal?.aborted);
+          }).pipe(
+            Effect.provide(
+              provider.layer(async (nativeSignal) => {
+                attempts++;
+                signal = nativeSignal;
+                started.resolve();
+                return new Promise(() => undefined);
+              }, Duration.seconds(1)),
+            ),
+          );
+        }),
+    );
   });
 }
