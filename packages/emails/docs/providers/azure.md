@@ -20,7 +20,9 @@ The default deadline is 60 seconds, with a one-second polling interval; both acc
 Durations. No generic idempotency is promised.
 
 A receipt requires `Succeeded`, retaining a typed operation ID. It acknowledges the send operation,
-not delivery. Failed/canceled operations reject; poll failures/timeouts after operation creation keep
+not delivery. Every observed initial/final operation ID must match the original submission; conflicting
+identities remain uncertain and retain the original reference. Concurrent sends keep separate operation
+state. Failed/canceled operations reject; poll failures/timeouts after operation creation keep
 that original reference and an uncertain outcome. Polling stops on completion/interruption and never
 starts a second submission. Abort does not cancel a remote operation already accepted by Azure.
 Offline tests exercise the real SDK with a deterministic HTTP pipeline; no live resource was used.

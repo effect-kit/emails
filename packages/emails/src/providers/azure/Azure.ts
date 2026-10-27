@@ -88,7 +88,13 @@ const make = Effect.fnUntraced(function* (client: AzureClient, options: ClientOp
           abortSignal.addEventListener("abort", stop, { once: true });
           try {
             const initial = Schema.decodeUnknownResult(Operation)(poller.getResult());
-            if (Result.isSuccess(initial)) operationId ??= initial.success.id;
+            if (Result.isSuccess(initial)) {
+              if (operationId !== undefined && operationId !== initial.success.id) {
+                identityChanged = true;
+                return initial.success;
+              }
+              operationId ??= initial.success.id;
+            }
             try {
               return await poller.pollUntilDone({ abortSignal });
             } catch (cause) {
