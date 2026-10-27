@@ -3,7 +3,8 @@
 An Effect v4 native email package under development. Core contracts, the Email service and
 custom-provider Layers and all 16 planned provider integrations are implemented.
 See the [provider support table](packages/emails/docs/providers/README.md) for SDKs and capability limits.
-Optional [React rendering](packages/emails/docs/rendering.md) is implemented; portable batching is next.
+Optional [React rendering](packages/emails/docs/rendering.md) and
+[bounded portable batches](packages/emails/docs/batch.md) are implemented.
 
 ## Development
 

@@ -39,3 +39,7 @@ export {
   SendReceipt,
   SubmissionReference,
 } from "#/delivery/EmailReceipt.js";
+
+export { BatchError } from "#/errors/BatchError.js";
+export { BatchOptions, EmailRequest } from "#/service/batch/SendMany.js";
+export type { SendOutcome } from "#/service/batch/SendMany.js";

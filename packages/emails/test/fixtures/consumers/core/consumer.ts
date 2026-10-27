@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Effect, Result } from "effect";
 
 import { Email, EmailError, RateLimitedError } from "@effect-kit/emails";
 import type { SendReceipt } from "@effect-kit/emails";
@@ -34,6 +34,28 @@ const program = Effect.gen(function* () {
 }).pipe(Effect.provide(EmailTest.layer()));
 
 await Effect.runPromise(program);
+
+await Effect.runPromise(
+  Effect.gen(function* () {
+    const outcomes = yield* Email.sendMany([{ message }, { message: { ...message, to: [] } }]);
+    const accepted = outcomes[0];
+    const invalid = outcomes[1];
+    if (
+      accepted === undefined ||
+      !Result.isSuccess(accepted) ||
+      accepted.success.status !== "accepted" ||
+      invalid === undefined ||
+      !Result.isFailure(invalid) ||
+      invalid.failure.reason._tag !== "InvalidMessageError"
+    ) {
+      throw new Error("Packed batch outcomes lost their input positions or error contract");
+    }
+    const invalidBatch = yield* Email.sendMany([{ message }], { concurrency: 0 }).pipe(
+      Effect.catchTag("BatchError", (error) => Effect.succeed(error.reason)),
+    );
+    if (invalidBatch !== "InvalidOptions") throw new Error("Packed batch validation failed");
+  }).pipe(Effect.provide(EmailTest.layer())),
+);
 
 const limited = new EmailError({
   provider: "test",

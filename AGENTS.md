@@ -4,7 +4,8 @@
 
 This is the pnpm/Turborepo workspace for `@effect-kit/emails`, an Effect v4 native library.
 `packages/emails` is the only publishable package. Core contracts, Email.make and custom-provider Layer composition are implemented. Built-in SDK
-adapters cover all 16 providers listed in packages/emails/docs/providers/README.md; optional React rendering is implemented and batching remains planned. Provider implementations
+adapters cover all 16 providers listed in packages/emails/docs/providers/README.md; optional React rendering
+and Email.sendMany portable batches are implemented. Provider implementations
 live under providers/<provider>/ with explicit public subpath entries.
 The public testing Layer lives under src/testing/,
 with an explicit src/testing.ts subpath entry; core never re-exports it.

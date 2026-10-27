@@ -2,6 +2,7 @@ import { Context, Effect, Result, Schema } from "effect";
 
 import { EmailCapabilities } from "#/delivery/EmailCapabilities.js";
 import { ProviderName, SendReceipt } from "#/delivery/EmailReceipt.js";
+import type { BatchError } from "#/errors/BatchError.js";
 import {
   EmailError,
   InvalidMessageError,
@@ -10,6 +11,8 @@ import {
 } from "#/errors/EmailError.js";
 import { EmailMessage, SendOptions } from "#/message/EmailMessage.js";
 import type { NormalizedEmailMessage } from "#/message/EmailMessage.js";
+import { sendManyWith } from "#/service/batch/SendMany.js";
+import type { BatchOptions, EmailRequest, SendOutcome } from "#/service/batch/SendMany.js";
 import { invalidPaths, snapshotMessage, unsupportedFeature } from "#/service/MessagePreparation.js";
 
 export interface EmailService {
@@ -40,6 +43,15 @@ const decodeConfiguration = Schema.decodeUnknownResult(
 const parseOptions = { onExcessProperty: "error", errors: "all" } as const;
 
 export class Email extends Context.Service<Email, EmailService>()("@effect-kit/emails/Email") {
+  /** Bounded independent sends; expected errors stay in ordered per-entry results. */
+  static readonly sendMany = Effect.fnUntraced(function* (
+    requests: ReadonlyArray<EmailRequest>,
+    options: BatchOptions = {},
+  ): Effect.fn.Return<ReadonlyArray<SendOutcome>, BatchError, Email> {
+    const email = yield* Email;
+    return yield* sendManyWith(email, requests, options);
+  });
+
   /** Apply validation, capability enforcement and one submission span to a custom adapter. */
   static make(adapter: EmailAdapter): EmailService {
     const configuration = decodeConfiguration(
