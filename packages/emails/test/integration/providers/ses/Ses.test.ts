@@ -202,5 +202,14 @@ it.effect("destroys owned clients on scope close and preserves borrowed clients"
     );
     yield* Effect.scoped(Layer.build(Ses.layerClient(client)));
     assert.strictEqual(destroy.mock.calls.length, 1);
+    const invalid = yield* Effect.scoped(
+      Layer.build(
+        Ses.layer({ region: "eu-west-1", credentials, configurationSetName: "invalid\n" }),
+      ),
+    ).pipe(Effect.result);
+    assert.isTrue(Result.isFailure(invalid));
+    if (Result.isFailure(invalid))
+      assert.strictEqual(invalid.failure.field, "configurationSetName");
+    assert.strictEqual(destroy.mock.calls.length, 2);
   }),
 );
