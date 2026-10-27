@@ -2,6 +2,7 @@ import type { EmailMessage, EmailRequest } from "@effect-kit/emails";
 
 const sender = { email: "sender@example.com", name: "Équipe" };
 const to = { email: "ada@example.com", name: "Ada" };
+const otherTo = { email: "grace@example.com", name: "Grâce" };
 const cc = { email: "copy@example.com", name: "Copie" };
 const bcc = { email: "private@example.com", name: "Privé" };
 const replies = [
@@ -27,7 +28,7 @@ export const capabilityMessage = (provider: string): EmailMessage => {
   };
   return {
     from: provider === "azure" ? sender.email : sender,
-    to,
+    to: [to, otherTo],
     cc,
     bcc,
     subject,
@@ -142,13 +143,13 @@ export const rejectedCapabilityRequests = (provider: string) => {
 };
 
 const fromText = '"Équipe" <sender@example.com>';
-const toText = '"Ada" <ada@example.com>';
+const toText = ['"Ada" <ada@example.com>', '"Grâce" <grace@example.com>'];
 const ccText = '"Copie" <copy@example.com>';
 const bccText = '"Privé" <private@example.com>';
 const replyText = ['"Réponse" <reply@example.com>', '"Support" <support@example.com>'];
 const common = { subject, text, html, headers };
-const stringAddresses = { from: fromText, to: [toText], cc: [ccText], bcc: [bccText] };
-const objectAddresses = { from: sender, to: [to], cc: [cc], bcc: [bcc] };
+const stringAddresses = { from: fromText, to: toText, cc: [ccText], bcc: [bccText] };
+const objectAddresses = { from: sender, to: [to, otherTo], cc: [cc], bcc: [bcc] };
 const bytes = "AP+A";
 const nativeAttachments = [
   { filename: "facture-é.bin", contentType: "application/octet-stream", content: bytes },
@@ -169,11 +170,11 @@ export const capabilityPayloads: Readonly<Record<string, Readonly<Record<string,
   nodemailer: {
     ...common,
     from: smtpAddress(sender),
-    to: [smtpAddress(to)],
+    to: [smtpAddress(to), smtpAddress(otherTo)],
     cc: [smtpAddress(cc)],
     bcc: [smtpAddress(bcc)],
     replyTo: replies.map(smtpAddress),
-    envelope: { from: sender.email, to: [to.email, cc.email, bcc.email] },
+    envelope: { from: sender.email, to: [to.email, otherTo.email, cc.email, bcc.email] },
     attachments: nativeAttachments.map(({ contentId, ...attachment }) => ({
       ...attachment,
       encoding: "base64",
@@ -182,7 +183,7 @@ export const capabilityPayloads: Readonly<Record<string, Readonly<Record<string,
   },
   ses: {
     FromEmailAddress: fromText,
-    Destination: { ToAddresses: [toText], CcAddresses: [ccText], BccAddresses: [bccText] },
+    Destination: { ToAddresses: toText, CcAddresses: [ccText], BccAddresses: [bccText] },
     ReplyToAddresses: replyText,
     "Content.Simple.Subject.Data": subject,
     "Content.Simple.Body.Text.Data": text,
@@ -200,7 +201,11 @@ export const capabilityPayloads: Readonly<Record<string, Readonly<Record<string,
   azure: {
     senderAddress: sender.email,
     content: { subject, plainText: text, html },
-    recipients: { to: [azureAddress(to)], cc: [azureAddress(cc)], bcc: [azureAddress(bcc)] },
+    recipients: {
+      to: [azureAddress(to), azureAddress(otherTo)],
+      cc: [azureAddress(cc)],
+      bcc: [azureAddress(bcc)],
+    },
     replyTo: replies.map(azureAddress),
     headers,
     attachments: nativeAttachments.map(({ filename, contentType, contentId }) => ({
@@ -212,7 +217,7 @@ export const capabilityPayloads: Readonly<Record<string, Readonly<Record<string,
   },
   postmark: {
     From: fromText,
-    To: toText,
+    To: toText.join(", "),
     Cc: ccText,
     Bcc: bccText,
     ReplyTo: replyText.join(", "),
@@ -267,7 +272,7 @@ export const capabilityPayloads: Readonly<Record<string, Readonly<Record<string,
   },
   brevo: {
     sender,
-    to: [to],
+    to: [to, otherTo],
     cc: [cc],
     bcc: [bcc],
     subject,
@@ -312,7 +317,7 @@ export const capabilityPayloads: Readonly<Record<string, Readonly<Record<string,
   eusend: { ...common, ...stringAddresses, replyTo: replyText, attachments: nativeAttachments },
   zeptomail: {
     from: zeptoAddress(sender),
-    to: [{ email_address: zeptoAddress(to) }],
+    to: [{ email_address: zeptoAddress(to) }, { email_address: zeptoAddress(otherTo) }],
     cc: [{ email_address: zeptoAddress(cc) }],
     bcc: [{ email_address: zeptoAddress(bcc) }],
     subject,
@@ -335,6 +340,7 @@ export const capabilityPayloads: Readonly<Record<string, Readonly<Record<string,
     "message.from_name": sender.name,
     "message.to": [
       { ...to, type: "to" },
+      { ...otherTo, type: "to" },
       { ...cc, type: "cc" },
       { ...bcc, type: "bcc" },
     ],

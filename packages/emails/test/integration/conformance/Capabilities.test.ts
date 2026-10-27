@@ -27,13 +27,21 @@ describe("advertised provider capabilities", () => {
               payload = request;
               if (provider.name === "nodemailer")
                 return {
-                  accepted: ["ada@example.com", "copy@example.com", "private@example.com"],
+                  accepted: [
+                    "ada@example.com",
+                    "grace@example.com",
+                    "copy@example.com",
+                    "private@example.com",
+                  ],
                   rejected: [],
                 };
               if (provider.name === "mailchimp-transactional")
-                return ["ada@example.com", "copy@example.com", "private@example.com"].map(
-                  (email, index) => ({ email, status: "queued", _id: `id-${index}` }),
-                );
+                return [
+                  "ada@example.com",
+                  "grace@example.com",
+                  "copy@example.com",
+                  "private@example.com",
+                ].map((email, index) => ({ email, status: "queued", _id: `id-${index}` }));
               return provider.response;
             }, Duration.seconds(1)),
           ),

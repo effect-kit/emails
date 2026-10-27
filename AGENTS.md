@@ -11,6 +11,8 @@ The public testing Layer lives under src/testing/,
 with an explicit src/testing.ts subpath entry; core never re-exports it.
 React rendering lives under src/rendering/react/ and the optional src/react.ts subpath. React types
 and renderer peers stay confined there; TSX examples/tests use react-jsx and tsdown owns TSX emit.
+Maintained reliability/telemetry policy lives in packages/emails/docs/reliability.md; the provider
+capability, ownership and transport evidence matrix is docs/providers/evidence.md in that package.
 
 - `packages/emails/src`: domain folders such as message/, delivery/, errors/ and service/.
   SDK adapters belong under providers/<provider>/. The root index is a deliberate public API.
@@ -62,6 +64,11 @@ Read `node_modules/effect/AGENTS.md` in full before writing Effect code. Follow 
   uncertain acceptance outcome. Provider acceptance does not prove inbox delivery.
 - Do not log secrets, recipients, subjects, content, raw SDK requests, or unsanitized errors.
   Use Config/Redacted for credentials. Never hard-code credentials or environment identifiers.
+- Keep built-in diagnostic codes explicitly recognized; syntax filtering alone can echo private text.
+  Keep expected errors safe, preserve defects/interruption, and document native cancellation limits.
+  Update the provider evidence matrix with capability, retry or ownership changes. Reuse conformance
+  fixtures to cover all 16 adapters; test telemetry under test/integration/observability/ and privacy
+  under test/integration/privacy/. Don't duplicate existing cases to increase a test count.
 
 ## Toolchain and verification
 

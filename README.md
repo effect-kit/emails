@@ -5,6 +5,8 @@ custom-provider Layers and all 16 planned provider integrations are implemented.
 See the [provider support table](packages/emails/docs/providers/README.md) for SDKs and capability limits.
 Optional [React rendering](packages/emails/docs/rendering.md) and
 [bounded portable batches](packages/emails/docs/batch.md) are implemented.
+See the [reliability guide](packages/emails/docs/reliability.md) and
+[provider evidence matrix](packages/emails/docs/providers/evidence.md) for verified boundaries and limits.
 
 ## Development
 

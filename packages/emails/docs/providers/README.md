@@ -5,6 +5,10 @@ Each module exposes `layer`, `layerClient` and `layerConfig`; the application st
 `const email = yield* Email; yield* email.send(message, options)` workflow. Root/core/testing imports
 never load a provider SDK. SDK versions are pinned to locally verified releases.
 
+See the [capability/evidence matrix](evidence.md) for tested field coverage, retry/deadline/ownership
+policy and links to the owning suites, and the [reliability guide](../reliability.md) for operational
+guarantees, telemetry privacy and remaining live release verification.
+
 | Provider / subpath                                                                 | Additional peer dependencies                              | Verified limits                                                                                |
 | ---------------------------------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | [Resend](../../README.md#resend) · `/resend`                                       | `resend@6.34.1`                                           | Explicit keys replay for 24 hours; native abort                                                |

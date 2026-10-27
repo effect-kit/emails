@@ -5,6 +5,8 @@ The public testing Layer captures offline submissions. All 16 provider adapters 
 optional SDK subpaths; see the [support table](docs/providers/README.md) for installation, configuration,
 capabilities and native cancellation limits. Optional [React rendering](docs/rendering.md) and
 [bounded portable batches](docs/batch.md) are available.
+The [reliability guide](docs/reliability.md) and [evidence matrix](docs/providers/evidence.md) describe
+tested guarantees, safe telemetry and provider-specific limits.
 
 ```ts
 import { Schema } from "effect";
@@ -253,9 +255,10 @@ connectionTimeout/greetingTimeout/socketTimeout as positive finite Effect Durati
 
 Owned transports disable pool requeues (maxRequeues: 0) and raw SDK logging. They are acquired once
 per Layer scope and closed on release, including acquisition failure after creation. Closing drains
-already-started native operations, bounded by socket timeouts; cleanup can outlast the Effect operation's
-deadline. SMTP cannot cancel one send. Interruption/timeout does not prove remote rejection; owned
-scope cleanup waits for in-flight native completion.
+already-started native operations using configured socket inactivity timeouts; cleanup can outlast
+the Effect operation's deadline. An active peer can prolong cleanup, so there is no fixed wall-clock
+shutdown bound. SMTP cannot cancel one send. Interruption/timeout does not prove remote rejection;
+owned scope cleanup waits for in-flight native completion.
 
 layerClient(client, { timeout? }) borrows an SMTP-compatible transporter and never closes or mutates
 it. A native borrowed pool must explicitly configure maxRequeues: 0 or acquisition fails. Custom
