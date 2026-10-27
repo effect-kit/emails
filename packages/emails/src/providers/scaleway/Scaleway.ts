@@ -63,16 +63,17 @@ const Response = Schema.Struct({
   emails: Schema.NonEmptyArray(Schema.Struct({ id: Schema.String })),
 });
 const make = Effect.fnUntraced(function* (client: ScalewayClient, options: ClientOptions) {
+  const { projectId, region } = options;
   const timeout = yield* settings("scaleway", undefined, options.timeout);
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(options.projectId))
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(projectId))
     return yield* new ProviderConfigurationError({ provider: "scaleway", field: "projectId" });
-  if (!["fr-par"].includes(options.region))
+  if (!["fr-par"].includes(region))
     return yield* new ProviderConfigurationError({ provider: "scaleway", field: "region" });
   return Email.make({
     provider: "scaleway",
     capabilities: { ...standardCapabilities, inlineAttachments: false },
     send: Effect.fnUntraced(function* (message) {
-      const request = payload(message, options);
+      const request = payload(message, { projectId, region });
       const response = yield* submission(
         "scaleway",
         timeout,

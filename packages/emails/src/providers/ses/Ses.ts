@@ -46,19 +46,17 @@ const Response = Schema.Struct({
 });
 
 const make = Effect.fnUntraced(function* (client: SesClient, options: ClientOptions) {
+  const { configurationSetName } = options;
   const timeout = options.timeout ?? Duration.seconds(30);
   if (!Schema.is(PositiveDuration)(timeout))
     return yield* new SesConfigurationError({ field: "timeout" });
-  if (
-    options.configurationSetName !== undefined &&
-    !/^[A-Za-z0-9_-]{1,64}$/.test(options.configurationSetName)
-  )
+  if (configurationSetName !== undefined && !/^[A-Za-z0-9_-]{1,64}$/.test(configurationSetName))
     return yield* new SesConfigurationError({ field: "configurationSetName" });
   return Email.make({
     provider: "ses",
     capabilities: standardCapabilities,
     send: Effect.fnUntraced(function* (message) {
-      const command = new SendEmailCommand(toSesMessage(message, options.configurationSetName));
+      const command = new SendEmailCommand(toSesMessage(message, configurationSetName));
       const response = yield* Effect.tryPromise({
         try: (abortSignal) => client.send(command, { abortSignal }),
         catch: fromSesFailure,

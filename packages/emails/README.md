@@ -98,6 +98,10 @@ returns Effect<SendReceipt, EmailError> with no hidden service requirements. Cap
 inside Layer.effect, then return Email.make with a callback closing over that client. See the tracked
 examples/custom-provider.ts in the repository for both forms.
 
+Built-in Layers capture validated routing, stream, timeout and mode settings during acquisition.
+Changing the supplied configuration object later does not reconfigure an acquired service; acquire
+a new Layer to change settings. Borrowed native clients remain controlled by their owner.
+
 Invalid provider/capability configuration passed to make throws a safe TypeError. Fallible application
 configuration belongs in Layer acquisition. Email.of is the trusted low-level Context constructor;
 it deliberately bypasses make's validation, normalization and instrumentation.

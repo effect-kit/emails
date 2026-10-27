@@ -52,8 +52,9 @@ const payload = (message: NormalizedEmailMessage) => ({
 });
 const Response = Schema.Struct({ id: Schema.String });
 const make = Effect.fnUntraced(function* (client: MailgunClient, options: ClientOptions) {
+  const { domain } = options;
   const timeout = yield* settings("mailgun", undefined, options.timeout);
-  if (!/^(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9-]+$/.test(options.domain))
+  if (!/^(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z0-9-]+$/.test(domain))
     return yield* new ProviderConfigurationError({ provider: "mailgun", field: "domain" });
   return Email.make({
     provider: "mailgun",
@@ -63,7 +64,7 @@ const make = Effect.fnUntraced(function* (client: MailgunClient, options: Client
       const response = yield* submission(
         "mailgun",
         timeout,
-        () => client.messages.create(options.domain, request),
+        () => client.messages.create(domain, request),
         (cause) => httpFailure("mailgun", cause),
       );
       const decoded = Schema.decodeUnknownResult(Response)(response);

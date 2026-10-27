@@ -65,14 +65,15 @@ const failure = (cause: unknown) => {
   });
 };
 const make = Effect.fnUntraced(function* (client: PostmarkClient, options: ClientOptions) {
+  const { messageStream } = options;
   const timeout = yield* settings("postmark", undefined, options.timeout);
-  if (options.messageStream !== undefined && !/^[A-Za-z0-9_-]+$/.test(options.messageStream))
+  if (messageStream !== undefined && !/^[A-Za-z0-9_-]+$/.test(messageStream))
     return yield* new ProviderConfigurationError({ provider: "postmark", field: "messageStream" });
   return Email.make({
     provider: "postmark",
     capabilities: standardCapabilities,
     send: Effect.fnUntraced(function* (message) {
-      const request = payload(message, options.messageStream);
+      const request = payload(message, messageStream);
       const response = yield* submission(
         "postmark",
         timeout,

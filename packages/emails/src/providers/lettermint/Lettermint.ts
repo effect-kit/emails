@@ -110,8 +110,9 @@ const failure = (provider: string, cause: unknown) => {
   return httpFailure(provider, cause);
 };
 const make = Effect.fnUntraced(function* (client: LettermintClient, options: ClientOptions) {
+  const { sandbox } = options;
   const timeout = yield* settings("lettermint", undefined, options.timeout);
-  const provider = options.sandbox ? "lettermint/sandbox" : "lettermint";
+  const provider = sandbox ? "lettermint/sandbox" : "lettermint";
   return Email.make({
     provider,
     capabilities: {
@@ -150,10 +151,7 @@ const make = Effect.fnUntraced(function* (client: LettermintClient, options: Cli
         (cause) => failure(provider, cause),
       );
       const decoded = Schema.decodeUnknownResult(Response)(response);
-      if (
-        Result.isFailure(decoded) ||
-        Boolean(decoded.success.sandbox) !== Boolean(options.sandbox)
-      )
+      if (Result.isFailure(decoded) || Boolean(decoded.success.sandbox) !== Boolean(sandbox))
         return yield* unexpectedResponse(provider);
       return yield* Effect.fromResult(accepted(provider, [decoded.success.message_id]));
     }),
