@@ -83,7 +83,7 @@ await withConsumerWorkspace(async (directory) => {
   const consumers = await runCommand(
     "verify registry consumers",
     process.execPath,
-    [".test-dist/consumer.js", "--fixture", "all", "--tarball", tarball],
+    [".test-dist/consumer.js", "--fixture", options.fixture, "--tarball", tarball],
     packageRoot,
     600_000,
   );
@@ -97,7 +97,7 @@ await withConsumerWorkspace(async (directory) => {
         version: candidate.version,
         integrity: inspected.integrity,
         provenance: metadata.dist.attestations?.provenance ?? null,
-        consumers: "all",
+        consumers: options.fixture,
       },
       null,
       2,

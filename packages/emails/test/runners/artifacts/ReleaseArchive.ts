@@ -22,16 +22,21 @@ const PackedPlan = Schema.Struct({
   ),
 });
 
-export const releaseOptions = () => {
-  const args = process.argv.slice(2);
+export const releaseOptions = (args: readonly string[] = process.argv.slice(2)) => {
   const { values } = parseArgs({
     args: args[0] === "--" ? args.slice(1) : args,
-    options: { "pack-dir": { type: "string" }, provenance: { type: "boolean", default: false } },
+    options: {
+      "pack-dir": { type: "string" },
+      provenance: { type: "boolean", default: false },
+      fixture: { type: "string", default: "all" },
+    },
   });
   assert(values["pack-dir"], "Provide --pack-dir with the Changesets packed artifact directory");
+  assert(values.fixture === "core" || values.fixture === "all", "Use --fixture core or all");
   return {
     directory: resolve(process.cwd(), "../..", values["pack-dir"]),
     provenance: values.provenance,
+    fixture: values.fixture,
   };
 };
 

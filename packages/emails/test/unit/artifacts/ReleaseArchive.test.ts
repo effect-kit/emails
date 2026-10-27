@@ -5,7 +5,34 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { withConsumerWorkspace } from "#/test/fixtures/consumers/workspace.js";
-import { readReleaseArchive } from "#/test/runners/artifacts/ReleaseArchive.js";
+import { readReleaseArchive, releaseOptions } from "#/test/runners/artifacts/ReleaseArchive.js";
+
+describe("release consumer selection", () => {
+  it("preserves the complete consumer matrix by default", () => {
+    expect(releaseOptions(["--pack-dir", "/tmp/candidate"]).fixture).toBe("all");
+  });
+
+  it("selects the fast core consumer without losing archive or provenance options", () => {
+    const options = releaseOptions([
+      "--",
+      "--fixture",
+      "core",
+      "--pack-dir",
+      "/tmp/candidate",
+      "--provenance",
+    ]);
+
+    expect(options.fixture).toBe("core");
+    expect(options.directory).toBe("/tmp/candidate");
+    expect(options.provenance).toBe(true);
+  });
+
+  it("rejects unsupported consumer selections", () => {
+    expect(() => releaseOptions(["--pack-dir", "/tmp/candidate", "--fixture", "../other"])).toThrow(
+      "Use --fixture core or all",
+    );
+  });
+});
 
 const writePlan = async (directory: string, path: string, integrity: string) => {
   await writeFile(

@@ -30,17 +30,18 @@ await withConsumerWorkspace(async (directory) => {
   const consumers = await runCommand(
     "verify release consumers",
     process.execPath,
-    [".test-dist/consumer.js", "--fixture", "all", "--tarball", candidate.tarball],
+    [".test-dist/consumer.js", "--fixture", options.fixture, "--tarball", candidate.tarball],
     packageRoot,
     600_000,
   );
   process.stdout.write(consumers);
-  const fixtures = (
-    await readdir(join(packageRoot, "test/fixtures/consumers"), { withFileTypes: true })
-  )
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .toSorted();
+  const fixtures =
+    options.fixture === "all"
+      ? (await readdir(join(packageRoot, "test/fixtures/consumers"), { withFileTypes: true }))
+          .filter((entry) => entry.isDirectory())
+          .map((entry) => entry.name)
+          .toSorted()
+      : [options.fixture];
   await writeFile(
     join(options.directory, "verification.json"),
     JSON.stringify(
