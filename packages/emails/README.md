@@ -194,7 +194,8 @@ const live = Resend.layerConfig();
 ```
 
 The tested SDK/peer is exactly 6.34.1. `ResendConfig` accepts apiKey (Redacted<string>), optional baseUrl
-(URL) and timeout (Effect Duration, default 30 seconds). `layerClient(client, { timeout? })` borrows a
+(URL) and timeout (Effect Duration, default 30 seconds). Base URLs require HTTP(S), without URL
+credentials, query strings or fragments. `layerClient(client, { timeout? })` borrows a
 structural ResendClient; it does not mutate or close the client. Public declarations do not expose the
 SDK's React/Buffer types, so using our owned factory requires neither React nor a renderer.
 

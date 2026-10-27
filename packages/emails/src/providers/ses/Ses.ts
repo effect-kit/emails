@@ -88,7 +88,9 @@ export const layer = (options: SesConfig): Layer.Layer<Email, SesConfigurationEr
         options.endpoint !== undefined &&
         (!["http:", "https:"].includes(options.endpoint.protocol) ||
           options.endpoint.username ||
-          options.endpoint.password)
+          options.endpoint.password ||
+          options.endpoint.search ||
+          options.endpoint.hash)
       )
         return yield* new SesConfigurationError({ field: "endpoint" });
       const credentials =

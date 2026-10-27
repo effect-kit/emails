@@ -90,7 +90,13 @@ export const layer = (options: ResendConfig): Layer.Layer<Email, ResendConfigura
       const key = Redacted.value(options.apiKey);
       if (!/^[!-~]+$/.test(key)) return yield* new ResendConfigurationError({ field: "apiKey" });
       const url = options.baseUrl ?? new URL("https://api.resend.com");
-      if (!["https:", "http:"].includes(url.protocol) || url.username || url.password) {
+      if (
+        !["https:", "http:"].includes(url.protocol) ||
+        url.username ||
+        url.password ||
+        url.search ||
+        url.hash
+      ) {
         return yield* new ResendConfigurationError({ field: "baseUrl" });
       }
       const client = new ResendSdk(key, {

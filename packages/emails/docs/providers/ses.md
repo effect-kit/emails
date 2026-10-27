@@ -12,7 +12,8 @@ Optional static `credentials.secretAccessKey` / `sessionToken` are Effect `Redac
 `layerClient(client, options)` borrows an existing SES v2 client. Configure its `maxAttempts: 1`;
 caller-owned retry policies remain caller responsibility. Owned clients always use one attempt and
 are destroyed when their Layer scope closes. An explicit `endpoint: URL` is available for compatible
-endpoints and local testing; production normally uses regional AWS endpoints.
+endpoints and local testing; production normally uses regional AWS endpoints. Explicit endpoints
+require HTTP(S), without URL credentials, query strings or fragments.
 
 Supports both body alternatives, display names, CC/BCC, multiple reply-to addresses, custom headers,
 binary attachments and inline CID. `MessageId` becomes a provider message reference; AWS request ID
