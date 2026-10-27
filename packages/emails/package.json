@@ -1,6 +1,6 @@
 {
   "name": "@effect-kit/emails",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Typed email sending for Effect with provider Layers, React rendering, and bounded concurrency.",
   "keywords": [
     "aws-ses",
