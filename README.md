@@ -1,14 +1,14 @@
 # Effect Emails
 
-Send transactional email with **Effect**. One typed API for 16 email providers, with composable
-Layers, typed errors, React templates and offline testing.
+An email library built for **Effect**. Typed messages, provider Layers, React rendering and
+bounded batches share one API across 16 providers.
 
 ```sh
 pnpm add @effect-kit/emails effect resend
 ```
 
-Use the same `Email` service with Resend, Amazon SES, Nodemailer and other providers. Install only
-the SDKs you use, and switch providers by supplying a different Layer.
+Provider SDKs are optional peers behind explicit subpaths. Core contracts and the testing Layer
+require only Effect.
 
 See the [package README](packages/emails/README.md) for setup, examples and supported providers.
 
@@ -23,8 +23,8 @@ pnpm test:artifacts
 ```
 
 `pnpm check` runs formatting, lint, type checks, offline tests and the tsdown build.
-`pnpm test:artifacts` checks the built package and installs it in isolated projects with only the
-dependencies each provider needs. `pnpm verify` runs both. Tests do not send live email.
+`pnpm test:artifacts` validates built exports, package contents and isolated selected-peer consumers.
+`pnpm verify` runs both. Tests do not send live email.
 
 The workspace uses TypeScript 7, Turborepo and Klarity/OXC tooling. Test configuration and fixtures
 live under `packages/emails/test/`. Contributor rules are in [AGENTS.md](AGENTS.md).

@@ -1,7 +1,7 @@
 {
   "name": "@effect-kit/emails",
   "version": "0.0.0",
-  "description": "Send email with Effect using a typed API, provider Layers, and optional React templates.",
+  "description": "Typed email sending for Effect with provider Layers, React rendering, and bounded concurrency.",
   "keywords": [
     "aws-ses",
     "effect",
