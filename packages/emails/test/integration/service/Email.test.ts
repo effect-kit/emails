@@ -1,5 +1,5 @@
 import { assert, describe, it } from "@effect/vitest";
-import { Cause, Context, Effect, Exit, Fiber, Layer, Tracer } from "effect";
+import { Cause, Context, Effect, Exit, Fiber, Layer } from "effect";
 
 import { Email, EmailError, TransportError } from "@effect-kit/emails";
 import type { EmailAdapter, SendReceipt } from "@effect-kit/emails";
@@ -129,57 +129,5 @@ describe("custom provider composition", () => {
         assert.isTrue(Exit.isFailure(exit));
         if (Exit.isFailure(exit)) assert.isTrue(Cause.hasInterruptsOnly(exit.cause));
       }),
-  );
-
-  it.effect("records one send span with safe attributes and no recipient/content/key values", () =>
-    Effect.gen(function* () {
-      const spans: Tracer.NativeSpan[] = [];
-      const tracer = Tracer.make({
-        span: (options) => {
-          const span = new Tracer.NativeSpan(options);
-          spans.push(span);
-          return span;
-        },
-      });
-      const email = makeCustomEmail({
-        capabilities: { ...capabilities, idempotency: { mode: "replay" } },
-      });
-
-      yield* email
-        .send(
-          {
-            ...message,
-            subject: "private-subject",
-            text: "private-content",
-            to: "private@example.com",
-          },
-          { idempotencyKey: "private-key" },
-        )
-        .pipe(Effect.withTracer(tracer));
-      yield* email.send({ ...message, to: [] }).pipe(Effect.result, Effect.withTracer(tracer));
-
-      const sendSpans = spans.filter((span) => span.name === "Email.send");
-      assert.lengthOf(sendSpans, 2);
-      assert.strictEqual(sendSpans[0]?.attributes.get("email.outcome"), "accepted");
-      assert.strictEqual(sendSpans[1]?.attributes.get("email.reason"), "InvalidMessageError");
-      for (const span of sendSpans) {
-        const serialized = JSON.stringify(
-          {
-            attributes: [...span.attributes],
-            events: span.events,
-            status: span.status,
-          },
-          (_key, value: unknown) => (typeof value === "bigint" ? String(value) : value),
-        );
-        for (const secret of [
-          "private-subject",
-          "private-content",
-          "private@example.com",
-          "private-key",
-        ]) {
-          assert.notInclude(serialized, secret);
-        }
-      }
-    }),
   );
 });

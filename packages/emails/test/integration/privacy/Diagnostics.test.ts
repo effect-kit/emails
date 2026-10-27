@@ -11,6 +11,7 @@ import * as Nodemailer from "@effect-kit/emails/nodemailer";
 import * as Resend from "@effect-kit/emails/resend";
 
 import { message } from "#/test/fixtures/email.js";
+import { captureSpans, serializeSpan } from "#/test/fixtures/observability/Spans.js";
 
 const privateCode = "sk_private_token_0123456789";
 const privateBody = "private-subject-and-body";
@@ -56,8 +57,11 @@ const cases: ReadonlyArray<{
 describe("safe provider diagnostics", () => {
   it.effect.each(cases)("omits private code-shaped text from $name", ({ layer, reason }) =>
     Effect.gen(function* () {
+      const { spans, tracer } = captureSpans();
       const email = yield* Email;
-      const result = yield* email.send({ ...message, subject: privateBody }).pipe(Effect.result);
+      const result = yield* email
+        .send({ ...message, subject: privateBody })
+        .pipe(Effect.withTracer(tracer), Effect.result);
       assert.isTrue(Result.isFailure(result));
       if (Result.isFailure(result)) {
         assert.strictEqual(result.failure.reason._tag, reason);
@@ -66,6 +70,7 @@ describe("safe provider diagnostics", () => {
           JSON.stringify(result.failure),
           JSON.stringify(Schema.encodeSync(EmailError)(result.failure)),
           inspect(result.failure, { depth: 10 }),
+          ...spans.map(serializeSpan),
         ]) {
           assert.notInclude(diagnostic, privateCode);
           assert.notInclude(diagnostic, privateBody);

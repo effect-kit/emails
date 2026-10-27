@@ -1,4 +1,4 @@
-import { Context, Effect, Result, Schema } from "effect";
+import { Cause, Context, Effect, Exit, Result, Schema } from "effect";
 
 import { EmailCapabilities } from "#/delivery/EmailCapabilities.js";
 import { ProviderName, SendReceipt } from "#/delivery/EmailReceipt.js";
@@ -138,8 +138,16 @@ export class Email extends Context.Service<Email, EmailService>()("@effect-kit/e
         Effect.annotateCurrentSpan({
           "email.outcome": "failed",
           "email.reason": error.reason._tag,
+          "email.acceptance": error.acceptance,
         }),
       ),
+      Effect.onExit((exit) => {
+        if (Exit.isSuccess(exit)) return Effect.void;
+        if (Cause.hasDies(exit.cause)) return Effect.annotateCurrentSpan("email.outcome", "defect");
+        if (Cause.hasInterruptsOnly(exit.cause))
+          return Effect.annotateCurrentSpan("email.outcome", "interrupted");
+        return Effect.void;
+      }),
     );
 
     return Email.of(Object.freeze({ provider, capabilities, send }));

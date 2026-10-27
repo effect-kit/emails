@@ -126,6 +126,10 @@ in the application. Reference values are evidence for lookup, not a deduplicatio
 One Email.send span records provider, outcome/reason and counts, without adding recipient addresses,
 subjects, content or keys. Custom adapters are responsible for safe error metadata/references and
 should not add sensitive span attributes or raw SDK causes. External exporters/logging remain yours.
+Outcomes are accepted, partiallyAccepted, failed, interrupted or defect. Expected failures include
+acceptance evidence; recipient/attachment counts appear after validation and capability checks.
+Defects keep their original Cause, including any sensitive programmer-supplied text in the span's
+failure status. Configure application exporters/loggers accordingly; the library does not erase defects.
 
 ## Testing an application
 
