@@ -46,7 +46,9 @@ This pnpm/Turborepo workspace publishes `@effect-kit/emails`, an ESM library for
 
 Run `pnpm check` for formatting, lint, source/test types, offline tests and build. Run
 `pnpm test:artifacts` for built E2E, packed-package validation and isolated selected-peer consumers.
-`pnpm verify` runs both. Fix failures caused by your change and report skipped checks accurately.
+`pnpm verify` runs both. `ci:check` runs the fast `check` gate; long artifact/consumer/compiler
+matrices run only in the manual Extended tests workflow through `test:extended`.
+`typecheck` includes test types. Fix failures caused by your change and report skipped checks accurately.
 
 Keep meaningful regression, error, lifecycle, privacy and public-contract tests. Reuse conformance
 fixtures instead of duplicating happy paths. Put type-only assertions in compile-only *.types.ts files.
@@ -55,8 +57,11 @@ Never send live email in default tests/CI. Add providers to the shared contracts
 
 ## Releases
 
-Keep the package at 0.0.0 for the maintainer's manual bootstrap. Changesets and the manual Release
-workflow handle later versions; follow `.changeset/README.md`. Use current major action tags, not SHAs,
+Changesets and the shared manual Release workflow handle versions after the completed bootstrap;
+follow `.changeset/README.md`. `release:prepare` selects fast pre-pack checks; `release:check`
+verifies exact archives with the isolated core consumer. Full consumer matrices remain manual.
+Release defaults to verification-only (`dry-run: true`); disable it explicitly for version PRs/publication.
+Use current major action tags, not SHAs,
 and shared setup. Publish only verified archives; no npm tokens or publish permissions in ordinary CI.
 Do not publish, push tags, configure external credentials or change live services without authorization.
 Keep READMEs concise and synchronized with actual behavior and commands.

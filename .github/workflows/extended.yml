@@ -1,0 +1,30 @@
+name: Extended tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: extended-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  consumers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["24.22.0", "24.x"]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: effect-kit/.github/actions/setup@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - run: pnpm ci:check
+      - run: pnpm test:extended

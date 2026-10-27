@@ -18,7 +18,7 @@
   "type": "module",
   "scripts": {
     "build": "turbo run build",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "clean": "turbo run clean",
     "dev": "turbo run dev",
     "format": "oxfmt --write .",
@@ -27,7 +27,7 @@
     "lint:fix": "oxlint --fix .",
     "prepare": "lefthook install",
     "test": "turbo run test",
-    "typecheck": "turbo run typecheck && tsc --project tsconfig.json --noEmit",
+    "typecheck": "turbo run typecheck typecheck:test && tsc --project tsconfig.json --noEmit",
     "typecheck:test": "turbo run typecheck:test",
     "check:package": "turbo run check:package",
     "changeset": "changeset",
@@ -37,8 +37,13 @@
     "test:artifacts": "pnpm test:e2e && pnpm check:package && pnpm test:consumer -- --fixture all",
     "verify": "pnpm check && pnpm test:artifacts",
     "release:pack": "changeset pack --out-dir packages/emails/test/results/release",
-    "release:check": "pnpm --filter @effect-kit/emails test:release",
-    "release:smoke": "pnpm --filter @effect-kit/emails test:release:registry"
+    "release:check": "pnpm --filter @effect-kit/emails test:release --fixture core",
+    "release:smoke": "pnpm --filter @effect-kit/emails test:release:registry --fixture core",
+    "ci:check": "pnpm check",
+    "release:prepare": "pnpm check",
+    "release:version": "pnpm version-packages",
+    "test:compat": "pnpm test:consumer -- --fixture react-resend --typescript 7.1.0-beta",
+    "test:extended": "pnpm test:artifacts && pnpm test:compat"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.5",

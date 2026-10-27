@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  merge_group:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,27 +16,12 @@ concurrency:
 
 jobs:
   check:
-    # Version PRs from GITHUB_TOKEN are verified after merge and again before publishing.
+    uses: effect-kit/.github/.github/workflows/ci.yml@v1
+    # Version PRs are checked after merge and again before publication.
     if: >-
-      !(github.event_name == 'pull_request' &&
-        github.actor == 'github-actions[bot]' &&
-        github.event.pull_request.head.ref == 'changeset-release/main' &&
-        github.event.pull_request.head.repo.full_name == github.repository)
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix:
-        node: ["24.22.0", "24.x"]
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/setup
-        with:
-          node-version: ${{ matrix.node }}
-          cache: pnpm
-      - run: pnpm verify
-      - name: Verify the beta compiler consumer boundary
-        if: matrix.node == '24.x'
-        run: pnpm test:consumer -- --fixture react-resend --typescript 7.1.0-beta
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.user.login != 'github-actions[bot]' ||
+      github.event.pull_request.head.repo.full_name != github.repository ||
+      github.head_ref != 'changeset-release/main'
+    with:
+      timeout-minutes: 10
